@@ -1,0 +1,21 @@
+{
+  "seo": {
+    "title": "Galerie – Citytaxi Horw",
+    "description": "Entdecken Sie unsere Fahrzeugflotte und erhalten Sie einen Einblick in den Alltag von Citytaxi Horw.",
+    "canonical": "https://citytaxihorw.ch/gallery",
+    "og": {
+      "title": "Galerie – Citytaxi Horw",
+      "description": "Bilder unserer Fahrzeugflotte und Fahrten in der Region Luzern.",
+      "url": "https://citytaxihorw.ch/gallery",
+      "type": "website"
+    }
+  },
+  "headline": "Unsere Galerie",
+  "subheadline": "Ein Blick auf unsere Fahrzeuge und die schöne Region Luzern.",
+  "categories": [
+    { "id": "all", "label": "Alle" },
+    { "id": "vehicles", "label": "Fahrzeuge" },
+    { "id": "luzern", "label": "Region Luzern" },
+    { "id": "service", "label": "Service" }
+  ]
+}

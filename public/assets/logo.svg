@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="280" height="80" viewBox="0 0 280 80">
+  <rect width="280" height="80" rx="4" fill="#0A0A0A"/>
+  <!-- Top decorative line -->
+  <line x1="20" y1="16" x2="260" y2="16" stroke="#C0C0C0" stroke-width="1" opacity="0.6"/>
+  <!-- Bottom decorative line -->
+  <line x1="20" y1="64" x2="260" y2="64" stroke="#C0C0C0" stroke-width="1" opacity="0.6"/>
+  <!-- CITY text -->
+  <text x="140" y="34" font-family="Georgia, serif" font-size="22" font-weight="700"
+        fill="url(#silverGrad)" text-anchor="middle" letter-spacing="8">CITY</text>
+  <!-- Subtitle -->
+  <text x="140" y="50" font-family="Georgia, serif" font-size="9"
+        fill="#C0C0C0" text-anchor="middle" letter-spacing="2">Limousine &amp; Taxi Service</text>
+  <text x="140" y="62" font-family="Georgia, serif" font-size="8"
+        fill="#909090" text-anchor="middle" letter-spacing="1.5">Horw | Luzern</text>
+  <!-- Silver gradient -->
+  <defs>
+    <linearGradient id="silverGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#E8E8E8"/>
+      <stop offset="50%" style="stop-color:#FFFFFF"/>
+      <stop offset="100%" style="stop-color:#A0A0A0"/>
+    </linearGradient>
+  </defs>
+</svg>

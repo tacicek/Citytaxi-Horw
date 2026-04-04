@@ -1,0 +1,96 @@
+{
+  "seo": {
+    "title": "Citytaxi Horw – Ihr Taxiservice in Horw & Region Luzern",
+    "description": "Zuverlässiger Taxiservice in Horw und der Region Luzern. Flughafentransfers, Businessfahrten, Limousinenservice – 24/7 verfügbar. Jetzt buchen!",
+    "canonical": "https://citytaxihorw.ch/",
+    "og": {
+      "title": "Citytaxi Horw – Ihr Taxiservice",
+      "description": "24/7 Taxiservice in Horw & Region Luzern. Professionell, pünktlich, zuverlässig.",
+      "url": "https://citytaxihorw.ch/",
+      "type": "website"
+    },
+    "schema": {
+      "@context": "https://schema.org",
+      "@type": "TaxiService",
+      "name": "Citytaxi Horw",
+      "url": "https://citytaxihorw.ch",
+      "telephone": "+41414408080",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Kantonsstrasse 2",
+        "addressLocality": "Horw",
+        "postalCode": "6048",
+        "addressCountry": "CH"
+      },
+      "areaServed": "Kanton Luzern"
+    }
+  },
+  "hero": {
+    "badge": "Ihr Taxipartner seit über 10 Jahren",
+    "headline": "Citytaxi Horw",
+    "subheadline": "Zuverlässig. Pünktlich. Komfortabel.",
+    "description": "Ihr professioneller Taxiservice in Horw und der Region Luzern – rund um die Uhr, für jede Gelegenheit. Flughafentransfers, Businessfahrten und vieles mehr.",
+    "cta_primary": { "href": "/booking", "label": "Jetzt Taxi buchen" },
+    "cta_secondary": { "href": "/services", "label": "Unsere Dienste" },
+    "phone": "+41414408080",
+    "phone_display": "+41 41 440 80 80"
+  },
+  "features": [
+    {
+      "icon": "🕐",
+      "title": "24/7 Verfügbar",
+      "description": "Rund um die Uhr für Sie da – ob früh morgens, spät abends oder an Feiertagen."
+    },
+    {
+      "icon": "✈️",
+      "title": "Flughafentransfer",
+      "description": "Pünktlicher Transfer zum Flughafen Zürich, Basel oder Bern – mit Flugüberwachung."
+    },
+    {
+      "icon": "💼",
+      "title": "Business Fahrten",
+      "description": "Professionelle Fahrten für Geschäftsreisende – diskret, pünktlich und komfortabel."
+    },
+    {
+      "icon": "🚗",
+      "title": "Komfortable Fahrzeuge",
+      "description": "Moderne, gepflegte Fahrzeuge für Ihre Fahrt – Ihr Komfort hat oberste Priorität."
+    },
+    {
+      "icon": "📍",
+      "title": "Region Luzern",
+      "description": "Wir fahren Sie überall in der Region Luzern und in die gesamte Deutschschweiz."
+    },
+    {
+      "icon": "💳",
+      "title": "Alle Zahlungsmittel",
+      "description": "Bar, Karte oder TWINT – wir akzeptieren alle gängigen Zahlungsmittel."
+    }
+  ],
+  "testimonials": [
+    {
+      "name": "Thomas M.",
+      "location": "Horw",
+      "rating": 5,
+      "text": "Sehr pünktlicher und freundlicher Service. Ich nutze Citytaxi Horw regelmäßig für meine Flughafentransfers – immer top!"
+    },
+    {
+      "name": "Sandra K.",
+      "location": "Luzern",
+      "rating": 5,
+      "text": "Immer zuverlässig und das Fahrzeug war sehr sauber. Gerne wieder! Kann ich nur weiterempfehlen."
+    },
+    {
+      "name": "Peter W.",
+      "location": "Kriens",
+      "rating": 5,
+      "text": "Professioneller Fahrer, angenehme Fahrt. Hat uns sicher und rechtzeitig zum Flughafen Zürich gebracht."
+    },
+    {
+      "name": "Monika L.",
+      "location": "Emmen",
+      "rating": 5,
+      "text": "Schnelle Reaktionszeit bei der Buchung, super netter Fahrer. Absolut empfehlenswert!"
+    }
+  ]
+}

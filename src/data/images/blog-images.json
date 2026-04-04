@@ -1,0 +1,14 @@
+{
+  "blog_airport": {
+    "url": "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=800&q=80",
+    "alt": "Flugzeug auf der Startbahn – Flughafentransfer Tipps"
+  },
+  "blog_luzern": {
+    "url": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80",
+    "alt": "Panorama Luzern – Ausflugsziele in der Region"
+  },
+  "blog_business": {
+    "url": "https://images.unsplash.com/photo-1553729459-efe14ef6055d?w=800&q=80",
+    "alt": "Business Meeting – Tipps für Geschäftsfahrten"
+  }
+}

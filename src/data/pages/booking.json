@@ -1,0 +1,61 @@
+{
+  "seo": {
+    "title": "Taxi buchen – Citytaxi Horw",
+    "description": "Jetzt einfach online Ihr Taxi buchen. Schnell, unkompliziert und 24/7 verfügbar. Citytaxi Horw – Ihr Partner in der Region Luzern.",
+    "canonical": "https://citytaxihorw.ch/booking",
+    "og": {
+      "title": "Taxi buchen – Citytaxi Horw",
+      "description": "Jetzt Taxi online bestellen. 24/7 Taxiservice in Horw & Region Luzern.",
+      "url": "https://citytaxihorw.ch/booking",
+      "type": "website"
+    }
+  },
+  "headline": "Taxi bestellen",
+  "subheadline": "Wählen Sie Ihre bevorzugte Buchungsmethode oder füllen Sie das Formular aus.",
+  "quick_options": [
+    {
+      "icon": "📞",
+      "title": "Sofort anrufen",
+      "value": "+41 41 440 80 80",
+      "description": "Direktbuchung per Telefon – rund um die Uhr",
+      "href": "tel:+41414408080"
+    },
+    {
+      "icon": "💬",
+      "title": "WhatsApp",
+      "value": "Nachricht senden",
+      "description": "Schnell und einfach per WhatsApp buchen",
+      "href": "https://wa.me/41414408080?text=Guten%20Tag%2C%20ich%20m%C3%B6chte%20ein%20Taxi%20bestellen."
+    },
+    {
+      "icon": "✉️",
+      "title": "E-Mail",
+      "value": "info@citytaxihorw.ch",
+      "description": "Anfrage per E-Mail senden",
+      "href": "mailto:info@citytaxihorw.ch"
+    }
+  ],
+  "form": {
+    "action_endpoint": "/api/booking",
+    "pickup_label": "Abholort",
+    "destination_label": "Zielort",
+    "date_label": "Datum",
+    "time_label": "Uhrzeit",
+    "passengers_label": "Anzahl Personen",
+    "passengers_options": [1, 2, 3, 4, 5, 6, 7, 8],
+    "service_label": "Fahrttyp",
+    "service_options": [
+      "Stadtfahrt",
+      "Flughafentransfer",
+      "Business Fahrt",
+      "Limousinenservice",
+      "Event / Ausflug",
+      "Sonstiges"
+    ],
+    "name_label": "Ihr Name",
+    "phone_label": "Telefonnummer",
+    "notes_label": "Anmerkungen",
+    "submit_label": "Fahrt anfragen",
+    "success_message": "Vielen Dank für Ihre Anfrage!"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "seo": {
+    "title": "Kontakt – Taxi Horw Luzern | Citytaxi Horw",
+    "description": "Kontaktieren Sie Citytaxi Horw: Telefon, WhatsApp, E-Mail oder Kontaktformular. 24/7 erreichbar für Ihre Taxibuchung.",
+    "canonical": "https://citytaxihorw.ch/contact",
+    "og": {
+      "title": "Kontakt – Citytaxi Horw",
+      "description": "24/7 erreichbar per Telefon, WhatsApp und E-Mail.",
+      "image": "/assets/og-default.jpg",
+      "type": "website"
+    }
+  },
+  "headline": "Kontakt",
+  "headline_en": "Contact",
+  "subheadline": "Wir sind 24 Stunden für Sie erreichbar",
+  "form": {
+    "name_label": "Name",
+    "email_label": "E-Mail",
+    "phone_label": "Telefon",
+    "message_label": "Ihre Nachricht",
+    "submit_label": "Nachricht senden",
+    "success_message": "Vielen Dank! Wir melden uns so schnell wie möglich.",
+    "action_endpoint": "/api/contact"
+  },
+  "map_embed": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d10854.0!2d8.3083!3d47.0136!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x478ffa42bba0a!2sHorw!5e0!3m2!1sde!2sch!4v1"
+}

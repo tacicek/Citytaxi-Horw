@@ -1,0 +1,43 @@
+{
+  "seo": {
+    "title": "Blog & Tipps – Citytaxi Horw",
+    "description": "Nützliche Tipps rund ums Taxifahren, Flughafentransfers und die Region Luzern. Bleiben Sie informiert mit dem Citytaxi Horw Blog.",
+    "canonical": "https://citytaxihorw.ch/blog",
+    "og": {
+      "title": "Blog & Tipps – Citytaxi Horw",
+      "description": "Tipps & Neuigkeiten rund um Taxi, Reisen und die Region Luzern.",
+      "url": "https://citytaxihorw.ch/blog",
+      "type": "website"
+    }
+  },
+  "headline": "Blog & Tipps",
+  "posts": [
+    {
+      "slug": "flughafentransfer-tipps",
+      "title": "5 Tipps für einen stressfreien Flughafentransfer",
+      "excerpt": "Pünktlich am Flughafen ankommen ist kein Zufall. Mit diesen Tipps planen Sie Ihren Transfer optimal – von der Buchung bis zur Abflughalle.",
+      "category": "Tipps",
+      "date": "2024-03-15",
+      "read_time": "4 Min.",
+      "image_key": "blog_airport"
+    },
+    {
+      "slug": "luzern-highlights",
+      "title": "Die schönsten Ausflugsziele in der Region Luzern",
+      "excerpt": "Von der Rigi bis zum Bürgenstock – wir stellen Ihnen die beliebtesten Ausflugsziele in der Zentralschweiz vor und bringen Sie sicher dorthin.",
+      "category": "Region",
+      "date": "2024-02-20",
+      "read_time": "6 Min.",
+      "image_key": "blog_luzern"
+    },
+    {
+      "slug": "businessfahrt-richtig-buchen",
+      "title": "Business-Fahrten richtig buchen – worauf es ankommt",
+      "excerpt": "Ob Kundentermin oder Messebesuch: Wir erklären, wie Sie Ihre Geschäftsfahrten in der Schweiz optimal organisieren.",
+      "category": "Business",
+      "date": "2024-01-10",
+      "read_time": "5 Min.",
+      "image_key": "blog_business"
+    }
+  ]
+}

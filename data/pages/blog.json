@@ -1,0 +1,88 @@
+{
+  "seo": {
+    "title": "Blog – Taxitipps & News | Citytaxi Horw",
+    "description": "Taxitipps, Reisetipps für Luzern, Flughafeninfos und News von Citytaxi Horw.",
+    "canonical": "https://citytaxihorw.ch/blog",
+    "og": {
+      "title": "Blog – Citytaxi Horw",
+      "description": "Taxitipps, Reisetipps und News aus Horw und Luzern.",
+      "image": "/assets/og-default.jpg",
+      "type": "website"
+    }
+  },
+  "headline": "Blog & News",
+  "posts": [
+    {
+      "slug": "flughafentransfer-zuerich-luzern",
+      "title": "Flughafentransfer Zürich ab Luzern – Der ultimative Guide 2026",
+      "title_en": "Airport Transfer Zurich from Lucerne – The Ultimate Guide 2026",
+      "excerpt": "Taxi, Zug oder Bus? Wir vergleichen alle Optionen für den Flughafentransfer Zürich ab Luzern – mit Preisen, Fahrzeiten und Profi-Tipps.",
+      "date": "2026-04-01",
+      "category": "Flughafentransfer",
+      "image_key": "blog_flughafen",
+      "read_time": "6 min",
+      "primary_keyword": "Flughafentransfer Zürich Luzern",
+      "quality_score": 92
+    },
+    {
+      "slug": "taxi-horw-luzern",
+      "title": "Taxi Horw Luzern – Alles über Taxiservice in Horw 2026",
+      "title_en": "Taxi Horw Lucerne – Everything About Taxi Service in Horw 2026",
+      "excerpt": "Taxitarife, Buchungswege, Vergleich mit ÖV und Uber: Der vollständige Leitfaden für Taxifahrten in Horw und Luzern.",
+      "date": "2026-03-20",
+      "category": "Taxiservice",
+      "image_key": "blog_taxi_horw",
+      "read_time": "5 min",
+      "primary_keyword": "Taxi Horw Luzern",
+      "quality_score": 94
+    },
+    {
+      "slug": "limousine-mieten-luzern",
+      "title": "Limousine mieten Luzern – Preise, Anlässe & Tipps 2026",
+      "title_en": "Hire a Limousine in Lucerne – Prices, Occasions & Tips 2026",
+      "excerpt": "Business-Limousine oder Stretchlimousine? Wir erklären die Unterschiede, nennen Preise ab CHF 250 und verraten 7 Tipps für die perfekte Buchung.",
+      "date": "2026-03-10",
+      "category": "Limousine",
+      "image_key": "blog_limousine",
+      "read_time": "6 min",
+      "primary_keyword": "Limousine mieten Luzern",
+      "quality_score": 93
+    },
+    {
+      "slug": "flughafen-transfer-tipps",
+      "title": "5 Tipps für einen stressfreien Flughafentransfer",
+      "title_en": "5 Tips for a Stress-Free Airport Transfer",
+      "excerpt": "Wie Sie Ihren Flughafentransfer optimal planen und pünktlich ankommen.",
+      "date": "2026-02-15",
+      "category": "Tipps",
+      "image_key": "blog_airport",
+      "read_time": "4 min",
+      "primary_keyword": "Flughafentransfer Tipps",
+      "quality_score": null
+    },
+    {
+      "slug": "luzern-sehenswuerdigkeiten",
+      "title": "Die besten Sehenswürdigkeiten in Luzern",
+      "title_en": "The Best Sights in Lucerne",
+      "excerpt": "Entdecken Sie die schönsten Orte in Luzern – bequem per Taxi.",
+      "date": "2026-01-20",
+      "category": "Luzern",
+      "image_key": "blog_luzern",
+      "read_time": "6 min",
+      "primary_keyword": "Sehenswürdigkeiten Luzern",
+      "quality_score": null
+    },
+    {
+      "slug": "business-taxi-vorteile",
+      "title": "Warum Business-Kunden auf Citytaxi Horw vertrauen",
+      "title_en": "Why Business Clients Trust Citytaxi Horw",
+      "excerpt": "Zuverlässigkeit, Diskretion und Komfort für Ihre Geschäftsreisen.",
+      "date": "2026-01-10",
+      "category": "Business",
+      "image_key": "blog_business",
+      "read_time": "3 min",
+      "primary_keyword": "Business Taxi Luzern",
+      "quality_score": null
+    }
+  ]
+}

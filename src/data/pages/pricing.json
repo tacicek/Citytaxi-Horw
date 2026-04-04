@@ -1,0 +1,79 @@
+{
+  "seo": {
+    "title": "Preise & Tarife – Citytaxi Horw",
+    "description": "Transparente Preise und faire Tarife bei Citytaxi Horw. Grundtarif, Kilometerpreis und Festpreise für Flughafentransfers in der Region Luzern.",
+    "canonical": "https://citytaxihorw.ch/pricing",
+    "og": {
+      "title": "Preise & Tarife – Citytaxi Horw",
+      "description": "Transparente Taxitarife in der Region Luzern. Faire Preise, keine versteckten Kosten.",
+      "url": "https://citytaxihorw.ch/pricing",
+      "type": "website"
+    }
+  },
+  "headline": "Preise & Tarife",
+  "subheadline": "Transparente Preise ohne versteckte Kosten – fair, klar und nachvollziehbar.",
+  "tariffs": [
+    {
+      "id": "standard",
+      "icon": "🚕",
+      "name": "Standard",
+      "base_fare": "CHF 6.50",
+      "per_km": "CHF 3.20 / km",
+      "min_fare": "CHF 15.00",
+      "featured": false,
+      "features": [
+        "Stadtfahrten & Kurzstrecken",
+        "Bis 4 Personen",
+        "Gepäck inklusive",
+        "Kreditkarte & TWINT"
+      ]
+    },
+    {
+      "id": "komfort",
+      "icon": "🚘",
+      "name": "Komfort",
+      "base_fare": "CHF 8.00",
+      "per_km": "CHF 3.80 / km",
+      "min_fare": "CHF 20.00",
+      "featured": true,
+      "features": [
+        "Komfortfahrzeug (Van/SUV)",
+        "Bis 6 Personen",
+        "Großes Gepäck problemlos",
+        "Alle Zahlungsmittel"
+      ]
+    },
+    {
+      "id": "business",
+      "icon": "💼",
+      "name": "Business",
+      "base_fare": "CHF 10.00",
+      "per_km": "CHF 4.50 / km",
+      "min_fare": "CHF 30.00",
+      "featured": false,
+      "features": [
+        "Premium Fahrzeug",
+        "Chauffeur-Service",
+        "Bis 4 Personen",
+        "Rechnung auf Anfrage"
+      ]
+    }
+  ],
+  "fixed_prices": [
+    { "route": "Horw → Flughafen Zürich", "price": "CHF 95.00" },
+    { "route": "Horw → Flughafen Basel", "price": "CHF 120.00" },
+    { "route": "Horw → Luzern Bahnhof", "price": "CHF 20.00" },
+    { "route": "Horw → Zug", "price": "CHF 45.00" },
+    { "route": "Horw → Bern", "price": "CHF 140.00" },
+    { "route": "Horw → Zürich HB", "price": "CHF 80.00" }
+  ],
+  "extras": [
+    { "label": "Nacht (22:00 – 06:00)", "price": "+20%" },
+    { "label": "Sonn- & Feiertage", "price": "+25%" },
+    { "label": "Kindersitz", "price": "CHF 5.00" },
+    { "label": "Tierbegleitung", "price": "CHF 5.00" },
+    { "label": "Wartezeit (ab 5 Min.)", "price": "CHF 0.80/Min." },
+    { "label": "Gepäck extra (>3 Stücke)", "price": "CHF 3.00" }
+  ],
+  "note": "Alle Preise in CHF inkl. MwSt. Festpreise gelten für Direktfahrten ohne Umwege. Preise auf Anfrage bestätigt."
+}

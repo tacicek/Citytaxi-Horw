@@ -1,0 +1,120 @@
+{
+  "seo": {
+    "title": "Taxi Horw Luzern – 24/7 Taxi & Limousine | Citytaxi Horw",
+    "description": "Citytaxi Horw: Zuverlässiger Taxi- und Limousinenservice in Horw und Luzern. Flughafentransfer Zürich, Business, Stadtfahrten. Jetzt bestellen: 041 XXX XX XX",
+    "canonical": "https://citytaxihorw.ch/",
+    "og": {
+      "title": "Citytaxi Horw – Taxi & Limousine Luzern",
+      "description": "24/7 Taxi & Limousine in Horw und Luzern. Flughafentransfer, Business, Events. Jetzt buchen.",
+      "image": "/assets/og-default.jpg",
+      "type": "website"
+    },
+    "schema": {
+      "@context": "https://schema.org",
+      "@type": "TaxiService",
+      "name": "Citytaxi Horw",
+      "url": "https://citytaxihorw.ch",
+      "telephone": "+41 41 XXX XX XX",
+      "email": "info@citytaxihorw.ch",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Musterstrasse 1",
+        "addressLocality": "Horw",
+        "postalCode": "6048",
+        "addressCountry": "CH"
+      },
+      "openingHours": "Mo-Su 00:00-24:00",
+      "priceRange": "$$",
+      "areaServed": ["Horw", "Luzern", "Zentralschweiz"],
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Taxiservices",
+        "itemListElement": [
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Flughafentransfer" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Businessfahrten" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Limousinenservice" } }
+        ]
+      }
+    }
+  },
+  "hero": {
+    "headline": "Ihr Premium Taxi & Limousinenservice",
+    "headline_en": "Your Premium Taxi & Limousine Service",
+    "subheadline": "Horw | Luzern | Zentralschweiz",
+    "description": "Zuverlässig, pünktlich und stilvoll – 24 Stunden täglich, 7 Tage die Woche.",
+    "description_en": "Reliable, punctual and stylish – 24 hours a day, 7 days a week.",
+    "cta_primary": { "label": "Taxi Bestellen", "href": "/booking" },
+    "cta_secondary": { "label": "Preise ansehen", "href": "/pricing" },
+    "phone": "+41 41 XXX XX XX",
+    "phone_display": "041 XXX XX XX",
+    "badge": "24/7 verfügbar"
+  },
+  "features": [
+    {
+      "icon": "🕐",
+      "title": "24/7 Verfügbar",
+      "title_en": "24/7 Available",
+      "description": "Rund um die Uhr für Sie da – an jedem Tag des Jahres."
+    },
+    {
+      "icon": "✈️",
+      "title": "Flughafentransfer",
+      "title_en": "Airport Transfer",
+      "description": "Pünktlicher Transfer zum Flughafen Zürich, Basel und Bern."
+    },
+    {
+      "icon": "💼",
+      "title": "Business Service",
+      "title_en": "Business Service",
+      "description": "Professionelle Fahrten für Geschäftskunden mit Komfort."
+    },
+    {
+      "icon": "🚘",
+      "title": "Luxusfahrzeuge",
+      "title_en": "Luxury Vehicles",
+      "description": "Moderne, gepflegte Fahrzeuge der Premiumklasse."
+    },
+    {
+      "icon": "📍",
+      "title": "Festpreise",
+      "title_en": "Fixed Prices",
+      "description": "Transparente Preise ohne versteckte Kosten."
+    },
+    {
+      "icon": "⭐",
+      "title": "Top Bewertungen",
+      "title_en": "Top Ratings",
+      "description": "Über 200 zufriedene Kunden mit 5-Sterne-Bewertungen."
+    }
+  ],
+  "testimonials": [
+    {
+      "name": "Hans Müller",
+      "location": "Luzern",
+      "rating": 5,
+      "text": "Pünktlich, freundlich und das Fahrzeug war tadellos sauber. Sehr zu empfehlen!",
+      "date": "2025-11"
+    },
+    {
+      "name": "Anna Schneider",
+      "location": "Horw",
+      "rating": 5,
+      "text": "Bester Taxiservice in der Region. Immer zuverlässig für meine Flughafentransfers.",
+      "date": "2025-12"
+    },
+    {
+      "name": "Marco Bianchi",
+      "location": "Kriens",
+      "rating": 5,
+      "text": "Sehr professionell und komfortabel. Der Fahrer war pünktlich und äusserst höflich.",
+      "date": "2026-01"
+    },
+    {
+      "name": "Sarah Weber",
+      "location": "Luzern",
+      "rating": 5,
+      "text": "Perfekter Service für unsere Firmenveranstaltung. Alles lief reibungslos ab.",
+      "date": "2026-02"
+    }
+  ]
+}

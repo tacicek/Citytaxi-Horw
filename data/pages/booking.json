@@ -1,0 +1,56 @@
+{
+  "seo": {
+    "title": "Taxi Bestellen – Online Buchung | Citytaxi Horw",
+    "description": "Taxi jetzt online bestellen oder anrufen. Citytaxi Horw: 24/7 verfügbar für Horw, Luzern und Zentralschweiz.",
+    "canonical": "https://citytaxihorw.ch/booking",
+    "og": {
+      "title": "Taxi Bestellen – Citytaxi Horw",
+      "description": "Jetzt Taxi online buchen oder per WhatsApp. 24/7 verfügbar.",
+      "image": "/assets/og-default.jpg",
+      "type": "website"
+    }
+  },
+  "headline": "Taxi Bestellen",
+  "headline_en": "Book a Taxi",
+  "subheadline": "Schnell, einfach und zuverlässig",
+  "form": {
+    "pickup_label": "Abholort",
+    "destination_label": "Zielort",
+    "date_label": "Datum",
+    "time_label": "Uhrzeit",
+    "passengers_label": "Anzahl Personen",
+    "passengers_options": [1, 2, 3, 4, 5, 6],
+    "service_label": "Fahrzeugklasse",
+    "service_options": ["Standard Taxi", "Business Class", "Limousine VIP"],
+    "name_label": "Ihr Name",
+    "phone_label": "Telefonnummer",
+    "email_label": "E-Mail (optional)",
+    "notes_label": "Besondere Wünsche",
+    "submit_label": "Jetzt Buchen",
+    "success_message": "Ihre Buchung wurde erfolgreich übermittelt. Wir melden uns in Kürze.",
+    "action_endpoint": "/api/booking"
+  },
+  "quick_options": [
+    {
+      "icon": "📞",
+      "title": "Telefonisch",
+      "value": "041 XXX XX XX",
+      "href": "tel:+41 41 XXX XX XX",
+      "description": "Sofortbuchung rund um die Uhr"
+    },
+    {
+      "icon": "💬",
+      "title": "WhatsApp",
+      "value": "Jetzt schreiben",
+      "href": "https://wa.me/41 41XXXXXXX",
+      "description": "Schnell und unkompliziert"
+    },
+    {
+      "icon": "📋",
+      "title": "Online Formular",
+      "value": "Formular ausfüllen",
+      "href": "#booking-form",
+      "description": "Vorabplanung für Ihren Termin"
+    }
+  ]
+}

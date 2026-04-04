@@ -1,0 +1,101 @@
+{
+  "seo": {
+    "title": "Dienstleistungen – Citytaxi Horw",
+    "description": "Entdecken Sie unsere Taxidienste: Flughafentransfer, Businessfahrten, Limousinenservice, Stadtfahrten und Events. Citytaxi Horw – Region Luzern.",
+    "canonical": "https://citytaxihorw.ch/services",
+    "og": {
+      "title": "Dienstleistungen – Citytaxi Horw",
+      "description": "Flughafentransfer, Businessfahrten, Limousinenservice und mehr.",
+      "url": "https://citytaxihorw.ch/services",
+      "type": "website"
+    }
+  },
+  "headline": "Unsere Dienstleistungen",
+  "subheadline": "Professionelle Taxidienste für jeden Anlass – von der Stadtfahrt bis zum internationalen Flughafentransfer.",
+  "services": [
+    {
+      "id": "flughafentransfer",
+      "slug": "flughafentransfer",
+      "icon": "✈️",
+      "title": "Flughafentransfer",
+      "image_key": "airport",
+      "description": "Pünktlicher und stressfreier Transfer zu den Flughäfen Zürich, Basel und Bern. Mit Flugüberwachung und kostenlosem Warten.",
+      "features": [
+        "Flughafen Zürich, Basel & Bern",
+        "Flugüberwachung inklusive",
+        "Kostenlose Wartezeit",
+        "Festpreisgarantie"
+      ]
+    },
+    {
+      "id": "businessfahrten",
+      "slug": "businessfahrten",
+      "icon": "💼",
+      "title": "Business Fahrten",
+      "image_key": "business",
+      "description": "Diskreter und professioneller Fahrservice für Geschäftsreisende. WLAN im Fahrzeug auf Wunsch verfügbar.",
+      "features": [
+        "Stilvolle Fahrzeuge",
+        "WLAN auf Anfrage",
+        "Diskret & pünktlich",
+        "Rechnung auf Wunsch"
+      ]
+    },
+    {
+      "id": "limousinenservice",
+      "slug": "limousinenservice",
+      "icon": "🚘",
+      "title": "Limousinenservice",
+      "image_key": "limousine",
+      "description": "Fahren Sie in Stil. Unser Limousinenservice bietet höchsten Komfort für besondere Anlässe und VIP-Transporte.",
+      "features": [
+        "Premium Fahrzeuge",
+        "Chauffeur-Service",
+        "Für besondere Anlässe",
+        "VIP-Betreuung"
+      ]
+    },
+    {
+      "id": "stadtfahrten",
+      "slug": "stadtfahrten",
+      "icon": "🏙️",
+      "title": "Stadtfahrten",
+      "image_key": "city",
+      "description": "Schnelle und zuverlässige Fahrten innerhalb von Horw, Luzern und der gesamten Zentralschweiz.",
+      "features": [
+        "Gesamte Region Luzern",
+        "24/7 verfügbar",
+        "Kurzstrecken willkommen",
+        "Faire Preise"
+      ]
+    },
+    {
+      "id": "events-und-ausfluge",
+      "slug": "events-und-ausfluge",
+      "icon": "🎉",
+      "title": "Events & Ausflüge",
+      "image_key": "event",
+      "description": "Gruppenfahrten zu Events, Konzerten, Hochzeiten oder Ausflügen. Wir kümmern uns um die sichere Hin- und Rückfahrt.",
+      "features": [
+        "Gruppenfahrten möglich",
+        "Hochzeiten & Events",
+        "Stunden- oder Tagesmiete",
+        "Flexible Planung"
+      ]
+    },
+    {
+      "id": "krankenfahrten",
+      "slug": "krankenfahrten",
+      "icon": "🏥",
+      "title": "Krankenfahrten",
+      "image_key": "medical",
+      "description": "Ruhige und zuverlässige Fahrten zu Arzt, Krankenhaus oder Therapie – diskret und mit besonderer Sorgfalt.",
+      "features": [
+        "Barrierefreie Fahrzeuge auf Anfrage",
+        "Begleitung möglich",
+        "Ruhige & rücksichtsvolle Fahrweise",
+        "Direktabrechnung prüfen"
+      ]
+    }
+  ]
+}

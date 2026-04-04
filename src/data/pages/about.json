@@ -1,0 +1,43 @@
+{
+  "seo": {
+    "title": "Über uns – Citytaxi Horw",
+    "description": "Lernen Sie Citytaxi Horw kennen. Über 10 Jahre Erfahrung im Taxiservice in Horw und der Region Luzern – professionell, zuverlässig, freundlich.",
+    "canonical": "https://citytaxihorw.ch/about",
+    "og": {
+      "title": "Über uns – Citytaxi Horw",
+      "description": "Ihr zuverlässiger Taxipartner in Horw seit über 10 Jahren.",
+      "url": "https://citytaxihorw.ch/about",
+      "type": "website"
+    }
+  },
+  "headline": "Über uns",
+  "intro": "Citytaxi Horw ist Ihr vertrauensvoller Taxipartner in Horw und der Region Luzern. Seit über zehn Jahren stehen wir für Zuverlässigkeit, Pünktlichkeit und erstklassigen Komfort. Ob Flughafentransfer, Businessfahrt oder der alltägliche Stadtverkehr – wir bringen Sie sicher, komfortabel und termingerecht ans Ziel. Unser engagiertes Team aus erfahrenen Fahrern kennt die Region in- und auswendig und steht Ihnen rund um die Uhr zur Verfügung.",
+  "stats": [
+    { "number": "10+", "label": "Jahre Erfahrung" },
+    { "number": "15'000+", "label": "Zufriedene Kunden" },
+    { "number": "24/7", "label": "Erreichbarkeit" },
+    { "number": "5★", "label": "Google-Bewertung" }
+  ],
+  "values": [
+    {
+      "icon": "⏱️",
+      "title": "Pünktlichkeit",
+      "description": "Wir erscheinen immer zur vereinbarten Zeit – Ihre Pünktlichkeit ist unser Versprechen."
+    },
+    {
+      "icon": "🤝",
+      "title": "Verlässlichkeit",
+      "description": "Auf uns können Sie zählen – bei jedem Wetter, zu jeder Tages- und Nachtzeit."
+    },
+    {
+      "icon": "😊",
+      "title": "Freundlichkeit",
+      "description": "Unser Team begrüßt Sie stets freundlich und macht Ihre Fahrt zu einem angenehmen Erlebnis."
+    },
+    {
+      "icon": "🔒",
+      "title": "Sicherheit",
+      "description": "Ihre Sicherheit hat höchste Priorität – gepflegte Fahrzeuge, erfahrene Fahrer, defensiver Fahrstil."
+    }
+  ]
+}
