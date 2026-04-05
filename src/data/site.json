@@ -6,10 +6,10 @@
     "favicon": "/favicon.ico"
   },
   "contact": {
-    "phone": "+41414408080",
-    "phone_display": "+41 41 440 80 80",
-    "whatsapp": "+41414408080",
-    "email": "info@citytaxihorw.ch",
+    "phone": "+41415144444",
+    "phone_display": "+41 41 514 44 44",
+    "whatsapp": "+41415144444",
+    "email": "[EMAIL_ADDRESS]",
     "address": {
       "street": "Kantonsstrasse 2",
       "zip": "6048",
@@ -24,10 +24,30 @@
   "navigation": {
     "logo": "/assets/logo.svg",
     "links": [
-      { "href": "/", "label_de": "Startseite" },
-      { "href": "/services", "label_de": "Dienstleistungen" },
-      { "href": "/about", "label_de": "Über uns" },
-      { "href": "/contact", "label_de": "Kontakt" }
+      {
+        "href": "/",
+        "label_de": "Startseite"
+      },
+      {
+        "href": "/services",
+        "label_de": "Dienstleistungen"
+      },
+      {
+        "href": "/gallery",
+        "label_de": "Galerie"
+      },
+      {
+        "href": "/blog",
+        "label_de": "Blog"
+      },
+      {
+        "href": "/about",
+        "label_de": "Über uns"
+      },
+      {
+        "href": "/contact",
+        "label_de": "Kontakt"
+      }
     ],
     "cta": {
       "href": "/booking",
@@ -35,12 +55,12 @@
     }
   },
   "social": {
-    "instagram": "",
-    "facebook": ""
+    "instagram": "https://www.instagram.com/citytaxihorw",
+    "facebook": "https://www.facebook.com/citytaxihorw"
   },
   "seo_defaults": {
     "default_description": "Citytaxi Horw – Ihr professioneller Taxiservice in Horw und der gesamten Region Luzern. Flughafentransfers, Businessfahrten und mehr. Jetzt buchen!",
     "locale": "de_CH",
-    "default_og_image": "/assets/og-image.jpg"
+    "default_og_image": "/assets/og-default.jpg"
   }
 }

@@ -1,6 +1,9 @@
 'use client'
 
+import Link from 'next/link'
 import homeData from '@/data/pages/home.json'
+
+type FeatureItem = (typeof homeData.features)[number]
 
 export default function FeatureGrid() {
   const { features } = homeData
@@ -9,11 +12,16 @@ export default function FeatureGrid() {
     <section className="features section-y section-dark">
       <div className="container">
         <div className="features__grid">
-          {features.map((feature, i) => (
+          {features.map((feature: FeatureItem, i: number) => (
             <div key={i} className="feature-item">
               <div className="feature-item__icon">{feature.icon}</div>
               <h3 className="feature-item__title">{feature.title}</h3>
               <p className="feature-item__desc">{feature.description}</p>
+              {'cta' in feature && feature.cta ? (
+                <Link href={feature.cta.href} className="feature-item__link">
+                  {feature.cta.label} →
+                </Link>
+              ) : null}
             </div>
           ))}
         </div>
@@ -52,6 +60,17 @@ export default function FeatureGrid() {
           font-size: var(--text-sm);
           color: var(--secondary-dark);
           line-height: 1.7;
+        }
+        .feature-item__link {
+          display: inline-block;
+          margin-top: 1.2rem;
+          font-size: var(--text-sm);
+          font-weight: 600;
+          color: var(--accent);
+          transition: color var(--transition);
+        }
+        .feature-item__link:hover {
+          color: var(--secondary-light);
         }
         @media (max-width: 900px) {
           .features__grid { grid-template-columns: repeat(2, 1fr); }

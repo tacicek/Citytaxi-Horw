@@ -5,15 +5,24 @@
     "canonical": "https://citytaxihorw.ch/about",
     "og": {
       "title": "Über uns – Citytaxi Horw",
-      "description": "Ihr vertrauensvoller Taxipartner in Horw & Luzern seit über 10 Jahren.",
+      "description": "Ihr vertrauensvoller Taxipartner in Horw & Luzern seit über 5 Jahren.",
       "image": "/assets/og-default.jpg",
       "type": "website"
     }
   },
-  "headline": "Über uns",
-  "headline_en": "About Us",
-  "intro": "Citytaxi Horw steht für Verlässlichkeit, Stil und exzellenten Service. Seit über 10 Jahren sind wir Ihr vertrauensvoller Fahrdienst in der Region Horw und Luzern.",
-  "intro_en": "Citytaxi Horw stands for reliability, style and excellent service. For over 10 years, we have been your trusted transportation service in the Horw and Lucerne region.",
+  "hero": {
+    "title": "Über uns",
+    "title_en": "About Us",
+    "subtitle": "Citytaxi Horw – Ihr professioneller Taxi- und Limousinenservice in Horw und Luzern",
+    "subtitle_en": "Citytaxi Horw – Your professional taxi & limousine service in Horw and Lucerne",
+    "cta": {
+      "label": "Taxi Bestellen",
+      "label_en": "Book a Taxi",
+      "href": "/booking"
+    }
+  },
+  "intro": "Citytaxi Horw steht für Verlässlichkeit, Stil und exzellenten Service. Seit über 5 Jahren sind wir Ihr vertrauensvoller Fahrdienst in der Region Horw und Luzern.",
+  "intro_en": "Citytaxi Horw stands for reliability, style and excellent service. For over 5 years, we have been your trusted transportation service in the Horw and Lucerne region.",
   "values": [
     {
       "icon": "🤝",
@@ -37,10 +46,22 @@
     }
   ],
   "stats": [
-    { "number": "10+", "label": "Jahre Erfahrung" },
-    { "number": "5000+", "label": "Zufriedene Kunden" },
-    { "number": "24/7", "label": "Verfügbarkeit" },
-    { "number": "5★", "label": "Ø Bewertung" }
+    {
+      "number": "10+",
+      "label": "Jahre Erfahrung"
+    },
+    {
+      "number": "5000+",
+      "label": "Zufriedene Kunden"
+    },
+    {
+      "number": "24/7",
+      "label": "Verfügbarkeit"
+    },
+    {
+      "number": "5★",
+      "label": "Ø Bewertung"
+    }
   ],
   "team": [
     {

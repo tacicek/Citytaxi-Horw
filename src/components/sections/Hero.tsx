@@ -6,17 +6,24 @@ import homeImages from '@/data/images/home-images.json'
 
 export default function Hero() {
   const { hero } = homeData
-  const { contact } = require('@/data/site.json')
 
   return (
     <section className="hero" aria-label="Hero">
       {/* Background */}
       <div className="hero__bg">
-        <img
-          src={homeImages.hero_bg.url}
-          alt={homeImages.hero_bg.alt}
-          className="hero__bg-img"
-        />
+        <picture>
+          {/* Mobile image (≤768 px) */}
+          <source
+            media="(max-width: 768px)"
+            srcSet={homeImages.hero_bg_mobile.url}
+          />
+          {/* Desktop fallback */}
+          <img
+            src={homeImages.hero_bg.url}
+            alt={homeImages.hero_bg.alt}
+            className="hero__bg-img"
+          />
+        </picture>
         <div className="hero__overlay" />
       </div>
 
@@ -73,6 +80,11 @@ export default function Hero() {
           position: absolute;
           inset: 0;
           z-index: 0;
+        }
+        .hero__bg picture {
+          display: block;
+          width: 100%;
+          height: 100%;
         }
         .hero__bg-img {
           width: 100%;
@@ -207,6 +219,11 @@ export default function Hero() {
           50% { transform: scaleY(1); transform-origin: top; }
           51% { transform: scaleY(1); transform-origin: bottom; }
           100% { transform: scaleY(0); transform-origin: bottom; }
+        }
+        @media (max-width: 768px) {
+          .hero__bg-img {
+            object-position: center center;
+          }
         }
         @media (max-width: 600px) {
           .hero__ctas { flex-direction: column; }

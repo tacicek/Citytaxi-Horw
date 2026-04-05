@@ -1,11 +1,15 @@
 {
   "seo": {
-    "title": "Citytaxi Horw – Ihr Taxiservice in Horw & Region Luzern",
-    "description": "Zuverlässiger Taxiservice in Horw und der Region Luzern. Flughafentransfers, Businessfahrten, Limousinenservice – 24/7 verfügbar. Jetzt buchen!",
+    "title": "Taxi Horw Luzern – 24/7 Taxi & Limousine | Citytaxi Horw",
+    "description": "Citytaxi Horw – Zuverlässiger Taxi- & Limousinenservice in Horw und Luzern. Flughafentransfer Zürich, Business & Stadtfahrten. ☎ 041 440 80 80",
     "canonical": "https://citytaxihorw.ch/",
+    "keywords": "Taxi Horw, Taxi Luzern, Flughafentransfer Zürich, Taxiservice 24/7, Limousinenservice Luzern",
     "og": {
-      "title": "Citytaxi Horw – Ihr Taxiservice",
-      "description": "24/7 Taxiservice in Horw & Region Luzern. Professionell, pünktlich, zuverlässig.",
+      "title": "Citytaxi Horw – Taxi & Limousine Luzern",
+      "description": "24/7 Taxi & Limousine in Horw und Luzern. Flughafentransfer, Business, Events. Jetzt buchen.",
+      "image": "/assets/og-default.jpg",
+      "imageWidth": 1200,
+      "imageHeight": 630,
       "url": "https://citytaxihorw.ch/",
       "type": "website"
     },
@@ -15,6 +19,11 @@
       "name": "Citytaxi Horw",
       "url": "https://citytaxihorw.ch",
       "telephone": "+41414408080",
+      "email": "info@citytaxihorw.ch",
+      "image": "https://citytaxihorw.ch/assets/og-default.jpg",
+      "priceRange": "$$",
+      "currenciesAccepted": "CHF",
+      "paymentAccepted": "Cash, Credit Card, TWINT",
       "address": {
         "@type": "PostalAddress",
         "streetAddress": "Kantonsstrasse 2",
@@ -22,13 +31,43 @@
         "postalCode": "6048",
         "addressCountry": "CH"
       },
-      "areaServed": "Kanton Luzern"
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 47.0136,
+        "longitude": 8.3083
+      },
+      "openingHoursSpecification": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
+        "opens": "00:00",
+        "closes": "23:59"
+      },
+      "areaServed": [
+        { "@type": "City", "name": "Horw" },
+        { "@type": "City", "name": "Luzern" },
+        { "@type": "AdministrativeArea", "name": "Zentralschweiz" }
+      ],
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Taxiservices",
+        "itemListElement": [
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Flughafentransfer" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Businessfahrten" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Limousinenservice" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Stadtfahrten" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Krankenfahrten" } }
+        ]
+      },
+      "sameAs": [
+        "https://www.facebook.com/citytaxihorw",
+        "https://www.instagram.com/citytaxihorw"
+      ]
     }
   },
   "hero": {
     "badge": "Ihr Taxipartner seit über 10 Jahren",
-    "headline": "Citytaxi Horw",
-    "subheadline": "Zuverlässig. Pünktlich. Komfortabel.",
+    "headline": "Taxi Horw & Luzern",
+    "subheadline": "Citytaxi Horw – Zuverlässig. Pünktlich. Komfortabel.",
     "description": "Ihr professioneller Taxiservice in Horw und der Region Luzern – rund um die Uhr, für jede Gelegenheit. Flughafentransfers, Businessfahrten und vieles mehr.",
     "cta_primary": { "href": "/booking", "label": "Jetzt Taxi buchen" },
     "cta_secondary": { "href": "/services", "label": "Unsere Dienste" },
@@ -44,7 +83,11 @@
     {
       "icon": "✈️",
       "title": "Flughafentransfer",
-      "description": "Pünktlicher Transfer zum Flughafen Zürich, Basel oder Bern – mit Flugüberwachung."
+      "description": "Pünktlicher Transfer zum Flughafen Zürich, Basel oder Bern – mit Flugüberwachung.",
+      "cta": {
+        "href": "/blog/flughafentransfer-tipps",
+        "label": "Tipps zum Flughafentransfer"
+      }
     },
     {
       "icon": "💼",

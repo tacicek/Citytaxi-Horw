@@ -29,7 +29,7 @@ export default function ServiceCards({ limit, showHeader = true }: ServiceCardsP
           {services.map((service) => {
             const img = servicesImages[service.image_key as keyof typeof servicesImages]
             return (
-              <article key={service.id} className="service-card">
+              <article key={service.id} id={service.slug} className="service-card">
                 <div className="service-card__img-wrap">
                   {img && (
                     <img
