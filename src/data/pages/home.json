@@ -52,10 +52,8 @@
         "name": "Taxiservices",
         "itemListElement": [
           { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Flughafentransfer" } },
-          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Businessfahrten" } },
           { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Limousinenservice" } },
-          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Stadtfahrten" } },
-          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Krankenfahrten" } }
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Stadtfahrten" } }
         ]
       },
       "sameAs": [

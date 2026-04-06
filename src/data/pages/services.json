@@ -28,20 +28,6 @@
       ]
     },
     {
-      "id": "businessfahrten",
-      "slug": "businessfahrten",
-      "icon": "💼",
-      "title": "Business Fahrten",
-      "image_key": "business",
-      "description": "Diskreter und professioneller Fahrservice für Geschäftsreisende. WLAN im Fahrzeug auf Wunsch verfügbar.",
-      "features": [
-        "Stilvolle Fahrzeuge",
-        "WLAN auf Anfrage",
-        "Diskret & pünktlich",
-        "Rechnung auf Wunsch"
-      ]
-    },
-    {
       "id": "limousinenservice",
       "slug": "limousinenservice",
       "icon": "🚘",
@@ -67,34 +53,6 @@
         "24/7 verfügbar",
         "Kurzstrecken willkommen",
         "Faire Preise"
-      ]
-    },
-    {
-      "id": "events-und-ausfluge",
-      "slug": "events-und-ausfluge",
-      "icon": "🎉",
-      "title": "Events & Ausflüge",
-      "image_key": "event",
-      "description": "Gruppenfahrten zu Events, Konzerten, Hochzeiten oder Ausflügen. Wir kümmern uns um die sichere Hin- und Rückfahrt.",
-      "features": [
-        "Gruppenfahrten möglich",
-        "Hochzeiten & Events",
-        "Stunden- oder Tagesmiete",
-        "Flexible Planung"
-      ]
-    },
-    {
-      "id": "krankenfahrten",
-      "slug": "krankenfahrten",
-      "icon": "🏥",
-      "title": "Krankenfahrten",
-      "image_key": "medical",
-      "description": "Ruhige und zuverlässige Fahrten zu Arzt, Krankenhaus oder Therapie – diskret und mit besonderer Sorgfalt.",
-      "features": [
-        "Barrierefreie Fahrzeuge auf Anfrage",
-        "Begleitung möglich",
-        "Ruhige & rücksichtsvolle Fahrweise",
-        "Direktabrechnung prüfen"
       ]
     }
   ]

@@ -1,26 +1,14 @@
 {
   "airport": {
-    "url": "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=800&q=80",
+    "url": "/assets/Airport transfer.webp",
     "alt": "Flughafentransfer – Taxi am Flughafen"
   },
-  "business": {
-    "url": "https://images.unsplash.com/photo-1553729459-efe14ef6055d?w=800&q=80",
-    "alt": "Business Taxi – professioneller Fahrservice"
-  },
   "limousine": {
-    "url": "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=800&q=80",
+    "url": "/assets/Limousinenservice.webp",
     "alt": "Limousinenservice – Luxusfahrzeug"
   },
   "city": {
     "url": "https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=800&q=80",
     "alt": "Stadtfahrt – Taxi in der Stadt"
-  },
-  "event": {
-    "url": "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&q=80",
-    "alt": "Event Transfer – Taxi für Veranstaltungen"
-  },
-  "medical": {
-    "url": "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800&q=80",
-    "alt": "Krankenfahrt – medizinischer Transport"
   }
 }
