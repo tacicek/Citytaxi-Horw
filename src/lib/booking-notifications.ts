@@ -60,19 +60,19 @@ export function buildDispatchEmailHtml(data: BookingPayload, bookingId: string):
   const rejectUrl   = `${SITE_BASE_URL}/api/booking/accept?id=${encodeURIComponent(bookingId)}&t=${encodeURIComponent(driverToken)}&action=reject`
 
   const rows: Array<{ label: string; value: string; highlight?: boolean }> = [
-    { label: 'Fahrttyp',   value: data.service,     highlight: true },
-    { label: 'Abholort',   value: data.pickup,       highlight: true },
-    { label: 'Zielort',    value: data.destination,  highlight: true },
-    { label: 'Datum',      value: formatDate(data.date) },
-    { label: 'Uhrzeit',    value: data.time },
-    { label: 'Personen',   value: data.passengers },
-    ...(data.returnTrip   ? [{ label: 'Rückfahrt',   value: 'Ja – bitte koordinieren' }] : []),
-    ...(data.flightNumber ? [{ label: 'Flugnummer',  value: data.flightNumber }] : []),
-    ...(data.luggage      ? [{ label: 'Gepäck',      value: data.luggage }] : []),
-    { label: 'Kunde',      value: data.name,         highlight: true },
-    { label: 'Telefon',    value: data.phone,         highlight: true },
-    ...(data.email        ? [{ label: 'E-Mail',      value: data.email }] : []),
-    ...(data.notes        ? [{ label: 'Anmerkungen', value: data.notes }] : []),
+    { label: 'Abholort',        value: data.pickup,       highlight: true },
+    { label: 'Zielort',         value: data.destination,  highlight: true },
+    { label: 'Datum',           value: formatDate(data.date) },
+    { label: 'Uhrzeit',         value: data.time },
+    { label: 'Personen',        value: data.passengers },
+    ...(data.service === 'Flughafentransfer' ? [{ label: 'Flughafentransfer', value: 'Ja ✈️', highlight: true as const }] : []),
+    ...(data.returnTrip   ? [{ label: 'Rückfahrt',       value: 'Ja – bitte koordinieren' }] : []),
+    ...(data.flightNumber ? [{ label: 'Flugnummer',       value: data.flightNumber }] : []),
+    ...(data.luggage      ? [{ label: 'Gepäck',           value: data.luggage }] : []),
+    { label: 'Kunde',           value: data.name,         highlight: true },
+    { label: 'Telefon',         value: data.phone,         highlight: true },
+    ...(data.email        ? [{ label: 'E-Mail',           value: data.email }] : []),
+    ...(data.notes        ? [{ label: 'Anmerkungen',      value: data.notes }] : []),
   ]
 
   const tableRows = rows.map(({ label, value, highlight }) => `
@@ -211,8 +211,8 @@ export function buildCustomerPendingHtml(data: BookingPayload): string {
               </tr>
               <tr>
                 <td style="padding:16px 20px;">
-                  <p style="margin:0;font-size:12px;color:#888;text-transform:uppercase;letter-spacing:0.8px;">Fahrttyp</p>
-                  <p style="margin:4px 0 0;font-size:15px;font-weight:600;color:#0a0a0a;">${escapeHtml(data.service)}${data.returnTrip ? ' (inkl. Rückfahrt)' : ''}</p>
+                  <p style="margin:0;font-size:12px;color:#888;text-transform:uppercase;letter-spacing:0.8px;">Fahrtart</p>
+                  <p style="margin:4px 0 0;font-size:15px;font-weight:600;color:#0a0a0a;">${data.service === 'Flughafentransfer' ? '✈️ Flughafentransfer' : 'Taxifahrt'}${data.returnTrip ? ' (inkl. Rückfahrt)' : ''}</p>
                 </td>
               </tr>
             </table>
@@ -303,8 +303,8 @@ export function buildCustomerTrackingHtml(data: BookingPayload, bookingId: strin
               </tr>
               <tr>
                 <td style="padding:16px 20px;">
-                  <p style="margin:0;font-size:12px;color:#888;text-transform:uppercase;letter-spacing:0.8px;">Fahrttyp</p>
-                  <p style="margin:4px 0 0;font-size:15px;font-weight:600;color:#0a0a0a;">${escapeHtml(data.service)}${data.returnTrip ? ' (inkl. Rückfahrt)' : ''}</p>
+                  <p style="margin:0;font-size:12px;color:#888;text-transform:uppercase;letter-spacing:0.8px;">Fahrtart</p>
+                  <p style="margin:4px 0 0;font-size:15px;font-weight:600;color:#0a0a0a;">${data.service === 'Flughafentransfer' ? '✈️ Flughafentransfer' : 'Taxifahrt'}${data.returnTrip ? ' (inkl. Rückfahrt)' : ''}</p>
                 </td>
               </tr>
             </table>

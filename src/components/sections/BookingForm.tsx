@@ -1,13 +1,12 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import bookingData from '@/data/pages/booking.json'
 import pricingData from '@/data/pages/pricing.json'
 import siteData from '@/data/site.json'
 import AddressAutocompleteField from '@/components/ui/AddressAutocompleteField'
-
-const AIRPORT_SERVICE = 'Flughafentransfer'
 
 // Fare range — edit in src/data/pages/pricing.json → estimate_range
 const FARE_LOW = pricingData.estimate_range.low
@@ -58,19 +57,20 @@ export default function BookingForm() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [minDate, setMinDate] = useState('')
-  const [service, setService] = useState(bookingData.form.service_options[0] ?? 'Stadtfahrt')
+  const [isAirportTransfer, setIsAirportTransfer] = useState(false)
   const [returnTrip, setReturnTrip] = useState(false)
   const [notif, setNotif] = useState<{
     dispatch: string
     customer: string
   } | null>(null)
   const [hadCustomerEmail, setHadCustomerEmail] = useState(false)
-  const [pickupAddr, setPickupAddr] = useState('')
-  const [destAddr, setDestAddr] = useState('')
+  const searchParams = useSearchParams()
+  const [pickupAddr, setPickupAddr] = useState(() => searchParams.get('pickup') ?? '')
+  const [destAddr, setDestAddr]     = useState(() => searchParams.get('destination') ?? '')
   const [rawDistance, setRawDistance] = useState<RawDistance | null>(null)
   const [estimating, setEstimating] = useState(false)
-  const [bookingTime, setBookingTime] = useState('')
-  const [bookingDate, setBookingDate] = useState('')
+  const [bookingTime, setBookingTime] = useState(() => searchParams.get('time') ?? '')
+  const [bookingDate, setBookingDate] = useState(() => searchParams.get('date') ?? '')
 
   const { form, quick_options } = bookingData
 
@@ -182,7 +182,7 @@ export default function BookingForm() {
       setNotif(json.notifications ?? null)
       setSubmitted(true)
       try { formEl.reset() } catch { /* ignore */ }
-      setService(bookingData.form.service_options[0] ?? 'Stadtfahrt')
+      setIsAirportTransfer(false)
       setReturnTrip(false)
     } catch (err) {
       setError(err instanceof Error ? err.message : form.error_network)
@@ -380,19 +380,6 @@ export default function BookingForm() {
                   </div>
                   <div className="form-row">
                     <div className="form-group">
-                      <label htmlFor="service">{form.service_label}</label>
-                      <select
-                        id="service"
-                        name="service"
-                        value={service}
-                        onChange={(ev) => setService(ev.target.value)}
-                      >
-                        {form.service_options.map((s) => (
-                          <option key={s} value={s}>{s}</option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="form-group">
                       <label htmlFor="passengers">{form.passengers_label}</label>
                       <select id="passengers" name="passengers" defaultValue="1">
                         {form.passengers_options.map((n) => (
@@ -402,19 +389,31 @@ export default function BookingForm() {
                         ))}
                       </select>
                     </div>
+                    <div className="form-group">
+                      <label htmlFor="luggage">{form.luggage_label}</label>
+                      <select id="luggage" name="luggage" defaultValue="">
+                        <option value="">—</option>
+                        {form.luggage_options.map((o) => (
+                          <option key={o.value} value={o.value}>{o.label}</option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
 
-                  <div className="form-group">
-                    <label htmlFor="luggage">{form.luggage_label}</label>
-                    <select id="luggage" name="luggage" defaultValue="">
-                      <option value="">—</option>
-                      {form.luggage_options.map((o) => (
-                        <option key={o.value} value={o.value}>{o.label}</option>
-                      ))}
-                    </select>
+                  <div className="form-group form-group--checkbox">
+                    <label className="booking__check-label">
+                      <input
+                        type="checkbox"
+                        name="airportTransfer"
+                        value="on"
+                        checked={isAirportTransfer}
+                        onChange={(e) => setIsAirportTransfer(e.target.checked)}
+                      />
+                      {form.airport_transfer_label}
+                    </label>
                   </div>
 
-                  {service === AIRPORT_SERVICE ? (
+                  {isAirportTransfer ? (
                     <div className="form-group">
                       <label htmlFor="flightNumber">{form.flight_label}</label>
                       <input

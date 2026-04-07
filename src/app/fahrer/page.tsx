@@ -15,6 +15,26 @@ import type { Session } from '@supabase/supabase-js'
 const DRIVER_TOKEN_LS = 'ctxh_driver_token'
 const INTERVAL_MS     = 5000
 
+/** Web Audio API chime — no external file needed */
+function playBell() {
+  try {
+    const ctx  = new AudioContext()
+    const osc  = ctx.createOscillator()
+    const gain = ctx.createGain()
+    osc.connect(gain)
+    gain.connect(ctx.destination)
+    osc.type = 'sine'
+    osc.frequency.setValueAtTime(1047, ctx.currentTime)           // C6
+    osc.frequency.setValueAtTime(1319, ctx.currentTime + 0.12)    // E6
+    osc.frequency.setValueAtTime(1568, ctx.currentTime + 0.24)    // G6
+    gain.gain.setValueAtTime(0.4, ctx.currentTime)
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.2)
+    osc.start(ctx.currentTime)
+    osc.stop(ctx.currentTime + 1.2)
+    osc.onended = () => ctx.close()
+  } catch { /* ignore: AudioContext blocked */ }
+}
+
 type Screen = 'loading' | 'dashboard' | 'gpsActive'
 
 type Booking = {
@@ -30,9 +50,15 @@ type Booking = {
   status: 'pending' | 'accepted' | 'rejected' | 'picked_up'
 }
 
+const darkLoader = (
+  <div style={{ minHeight: '100dvh', background: '#0a0a0a', display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: '76px' }}>
+    <div style={{ width: '5.6rem', height: '5.6rem', border: '4px solid rgba(255,255,255,0.1)', borderTopColor: '#C8A96E', borderRadius: '50%' }} />
+  </div>
+)
+
 export default function FahrerPage() {
   return (
-    <Suspense>
+    <Suspense fallback={darkLoader}>
       <FahrerInner />
     </Suspense>
   )
@@ -48,6 +74,7 @@ function FahrerInner() {
   const [acceptedBooks, setAccepted]   = useState<Booking[]>([])
   const [actionLoading, setActionLoad] = useState<string | null>(null)
   const [feedbackMsg, setFeedbackMsg]  = useState<string | null>(null)
+  const [bellEnabled, setBell]         = useState(true)
 
   // GPS state
   const [coords, setCoords]         = useState<{ lat: number; lng: number } | null>(null)
@@ -112,6 +139,36 @@ function FahrerInner() {
     if (screen === 'dashboard') void loadBookings()
   }, [screen, loadBookings])
 
+  // Supabase Realtime: auto-refresh when a booking is inserted or updated
+  const bellRef = useRef(bellEnabled)
+  useEffect(() => { bellRef.current = bellEnabled }, [bellEnabled])
+
+  useEffect(() => {
+    if (screen !== 'dashboard') return
+
+    const channel = supabase
+      .channel('bookings-dashboard')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'bookings' },
+        (payload) => {
+          // New pending booking → ring bell
+          if (
+            payload.eventType === 'INSERT' &&
+            (payload.new as { status?: string }).status === 'pending' &&
+            bellRef.current
+          ) {
+            playBell()
+          }
+          // Any change → reload list
+          void loadBookings()
+        }
+      )
+      .subscribe()
+
+    return () => { void supabase.removeChannel(channel) }
+  }, [screen, loadBookings])
+
   // Tab/browser close — mark driver offline
   useEffect(() => {
     const goOffline = () => {
@@ -127,13 +184,33 @@ function FahrerInner() {
     return () => window.removeEventListener('pagehide', goOffline)
   }, [])
 
-  // Annehmen / Ablehnen
-  const handleBookingAction = useCallback((bookingId: string, action: 'accept' | 'reject') => {
-    const t = driverToken.current
-    const token = t || ''
+  // Annehmen / Ablehnen — calls POST /api/booking/accept with Supabase JWT
+  const handleBookingAction = useCallback(async (bookingId: string, action: 'accept' | 'reject') => {
+    const s = sessionRef.current
+    if (!s) return
     setActionLoad(bookingId)
-    window.location.href = `/api/booking/accept?id=${encodeURIComponent(bookingId)}&t=${encodeURIComponent(token)}${action === 'reject' ? '&action=reject' : ''}`
-  }, [])
+    try {
+      const res = await fetch('/api/booking/accept', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${s.access_token}`,
+        },
+        body: JSON.stringify({ bookingId, action }),
+      })
+      const body = await res.json() as { ok: boolean; message?: string; error?: string }
+      if (body.ok) {
+        setFeedbackMsg(body.message ?? 'Erfolgreich.')
+        await loadBookings()
+      } else {
+        setFeedbackMsg(body.error ?? 'Fehler. Bitte erneut versuchen.')
+      }
+    } catch {
+      setFeedbackMsg('Netzwerkfehler. Bitte erneut versuchen.')
+    } finally {
+      setActionLoad(null)
+    }
+  }, [loadBookings])
 
   // Müşteriyi Aldım
   const handlePickup = useCallback(async (bookingId: string) => {
@@ -267,7 +344,17 @@ function FahrerInner() {
                   <p className="fp-header-email">{session?.user.email}</p>
                 </div>
               </div>
-              <button type="button" className="fp-signout-btn" onClick={handleSignOut}>Abmelden</button>
+              <div className="fp-header-right">
+                <button
+                  type="button"
+                  className={`fp-bell-btn${bellEnabled ? ' fp-bell-btn--on' : ''}`}
+                  onClick={() => setBell((v) => !v)}
+                  title={bellEnabled ? 'Benachrichtigungston an' : 'Benachrichtigungston aus'}
+                >
+                  {bellEnabled ? '🔔' : '🔕'}
+                </button>
+                <button type="button" className="fp-signout-btn" onClick={handleSignOut}>Abmelden</button>
+              </div>
             </div>
 
             {/* Feedback message */}
@@ -367,7 +454,7 @@ function FahrerInner() {
                           type="button"
                           className="fp-accept-btn"
                           disabled={actionLoading === b.id}
-                          onClick={() => handleBookingAction(b.id, 'accept')}
+                          onClick={() => void handleBookingAction(b.id, 'accept')}
                         >
                           {actionLoading === b.id ? '…' : '✅ Annehmen'}
                         </button>
@@ -375,7 +462,7 @@ function FahrerInner() {
                           type="button"
                           className="fp-reject-btn"
                           disabled={actionLoading === b.id}
-                          onClick={() => handleBookingAction(b.id, 'reject')}
+                          onClick={() => void handleBookingAction(b.id, 'reject')}
                         >
                           {actionLoading === b.id ? '…' : '❌ Ablehnen'}
                         </button>
@@ -467,6 +554,15 @@ function FahrerInner() {
         .fp-header-icon { font-size: 3.2rem; line-height: 1; }
         .fp-header-title { font-size: 1.8rem; font-weight: 800; color: #C8A96E; margin: 0; font-family: var(--font-heading); }
         .fp-header-email { font-size: 1.2rem; color: #555; margin: 0; }
+        .fp-header-right { display: flex; align-items: center; gap: 0.8rem; }
+        .fp-bell-btn {
+          background: #2a2a2a; border: 1px solid #333; border-radius: 0.8rem;
+          font-size: 2rem; padding: 0.6rem 1rem; cursor: pointer;
+          line-height: 1; transition: background 0.15s;
+          opacity: 0.5;
+        }
+        .fp-bell-btn--on { opacity: 1; }
+        .fp-bell-btn:hover { background: #222; }
         .fp-signout-btn {
           background: #2a2a2a; border: 1px solid #333; border-radius: 0.8rem;
           color: #888; font-size: 1.3rem; padding: 0.8rem 1.4rem;

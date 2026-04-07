@@ -75,13 +75,14 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    const isAirport = data.airportTransfer === 'on' || data.airportTransfer === true
     const payload: BookingPayload = {
       pickup:       String(data.pickup).trim(),
       destination:  String(data.destination).trim(),
       date:         String(data.date),
       time:         String(data.time),
       passengers:   String(data.passengers || '1'),
-      service:      String(data.service || 'Stadtfahrt'),
+      service:      isAirport ? 'Flughafentransfer' : 'Stadtfahrt',
       returnTrip:   data.returnTrip === 'on' || data.returnTrip === true,
       name:         String(data.name).trim(),
       phone:        String(data.phone).trim(),

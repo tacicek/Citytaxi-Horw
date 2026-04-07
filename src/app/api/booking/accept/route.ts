@@ -124,3 +124,96 @@ function redirectToFahrer(message: string) {
   url.searchParams.set('msg', message)
   return NextResponse.redirect(url.toString())
 }
+
+/**
+ * POST /api/booking/accept
+ * Body: { bookingId: string, action?: 'accept' | 'reject' }
+ * Authorization: Bearer <supabase_access_token>
+ * Called from the driver dashboard (not the email link).
+ * Returns JSON instead of redirect.
+ */
+export async function POST(req: NextRequest) {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const serviceKey  = process.env.SUPABASE_SERVICE_KEY
+  if (!supabaseUrl || !serviceKey) {
+    return NextResponse.json({ ok: false, error: 'Server nicht konfiguriert.' }, { status: 500 })
+  }
+
+  // Verify driver via Supabase JWT
+  const authHeader = req.headers.get('Authorization') ?? ''
+  const accessToken = authHeader.replace(/^Bearer\s+/i, '')
+  if (!accessToken) {
+    return NextResponse.json({ ok: false, error: 'Kein Token.' }, { status: 401 })
+  }
+
+  const supabaseAdmin = createClient(supabaseUrl, serviceKey)
+  const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(accessToken)
+  if (authError || !user) {
+    return NextResponse.json({ ok: false, error: 'Nicht autorisiert.' }, { status: 401 })
+  }
+
+  let bookingId: string | undefined
+  let action: string = 'accept'
+  try {
+    const body = await req.json() as { bookingId?: string; action?: string }
+    bookingId = body.bookingId
+    action    = body.action ?? 'accept'
+  } catch {
+    return NextResponse.json({ ok: false, error: 'Ungültige Anfrage.' }, { status: 400 })
+  }
+
+  if (!bookingId) {
+    return NextResponse.json({ ok: false, error: 'bookingId fehlt.' }, { status: 400 })
+  }
+
+  // Fetch booking
+  const { data: booking, error: fetchError } = await supabaseAdmin
+    .from('bookings').select('*').eq('id', bookingId).single()
+
+  if (fetchError || !booking) {
+    return NextResponse.json({ ok: false, error: 'Buchung nicht gefunden.' }, { status: 404 })
+  }
+
+  if (booking.status !== 'pending') {
+    const msg = booking.status === 'accepted'
+      ? 'Diese Fahrt wurde bereits bestätigt.'
+      : 'Diese Fahrt wurde bereits abgelehnt.'
+    return NextResponse.json({ ok: true, message: msg })
+  }
+
+  const newStatus = action === 'reject' ? 'rejected' : 'accepted'
+  const { error: updateError } = await supabaseAdmin
+    .from('bookings').update({ status: newStatus }).eq('id', bookingId)
+
+  if (updateError) {
+    console.error('[BookingAccept POST] Update error:', updateError.message)
+    return NextResponse.json({ ok: false, error: 'Datenbankfehler.' }, { status: 500 })
+  }
+
+  const payload: BookingPayload = {
+    pickup:       booking.pickup,
+    destination:  booking.destination,
+    date:         booking.date,
+    time:         booking.time,
+    passengers:   booking.passengers,
+    service:      booking.service,
+    returnTrip:   booking.return_trip ?? false,
+    name:         booking.name,
+    phone:        booking.phone,
+    email:        booking.email ?? undefined,
+    flightNumber: booking.flight_number ?? undefined,
+    luggage:      booking.luggage ?? undefined,
+    notes:        booking.notes ?? undefined,
+    receivedAt:   booking.received_at,
+  }
+
+  if (newStatus === 'accepted' && payload.email) {
+    const result = await notifyBookingCustomerTracking(payload, bookingId)
+    if (!result.ok) console.error('[BookingAccept POST] Tracking e-mail failed:', result.error)
+  }
+
+  const message = newStatus === 'accepted'
+    ? 'Fahrt bestätigt. Tracking-Link wurde an den Kunden gesendet.'
+    : 'Fahrt abgelehnt.'
+  return NextResponse.json({ ok: true, message })
+}

@@ -4,7 +4,6 @@ import Hero from '@/components/sections/Hero'
 import FeatureGrid from '@/components/sections/FeatureGrid'
 import ServiceCards from '@/components/sections/ServiceCards'
 import Testimonials from '@/components/sections/Testimonials'
-import BookingForm from '@/components/sections/BookingForm'
 
 export const metadata: Metadata = {
   title: homeData.seo.title,
@@ -24,7 +23,6 @@ export default function HomePage() {
       <FeatureGrid />
       <ServiceCards limit={3} showHeader={true} />
       <Testimonials />
-      <BookingForm />
     </>
   )
 }

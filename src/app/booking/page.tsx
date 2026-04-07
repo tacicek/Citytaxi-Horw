@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { Suspense } from 'react'
 import bookingData from '@/data/pages/booking.json'
 import BookingForm from '@/components/sections/BookingForm'
 
@@ -21,7 +22,7 @@ export default function BookingPage() {
           </p>
         </div>
       </section>
-      <BookingForm />
+      <Suspense><BookingForm /></Suspense>
     </>
   )
 }

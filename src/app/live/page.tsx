@@ -54,9 +54,15 @@ const MAP_STYLE: object[] = [
   { featureType: 'landscape', elementType: 'geometry', stylers: [{ color: '#f5f5f5' }] },
 ]
 
+const darkLoader = (
+  <div style={{ minHeight: '100dvh', background: '#0a0a0a', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div style={{ width: '5.6rem', height: '5.6rem', border: '4px solid rgba(255,255,255,0.1)', borderTopColor: '#C8A96E', borderRadius: '50%' }} />
+  </div>
+)
+
 export default function LivePage() {
   return (
-    <Suspense>
+    <Suspense fallback={darkLoader}>
       <LiveInner />
     </Suspense>
   )

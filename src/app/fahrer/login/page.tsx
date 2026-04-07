@@ -4,6 +4,12 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 
+// Inline style ensures dark background before styled-jsx hydrates (prevents FOUC)
+const PAGE_STYLE: React.CSSProperties = {
+  minHeight: '100dvh',
+  background: '#0a0a0a',
+}
+
 export default function FahrerLoginPage() {
   const router = useRouter()
   const [email, setEmail]       = useState('')
@@ -29,7 +35,7 @@ export default function FahrerLoginPage() {
 
   return (
     <>
-      <div className="login-page">
+      <div className="login-page" style={PAGE_STYLE}>
         <div className="login-card">
           <span className="login-icon">🚕</span>
           <h1 className="login-title">Citytaxi Horw</h1>
