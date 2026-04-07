@@ -2,21 +2,24 @@
 
 /**
  * /takip — Customer live tracking page.
- * Subscribes to Supabase Realtime for live driver location updates.
- * Shows driver on Google Maps with auto-centering.
+ * - Supabase Realtime for live driver location
+ * - Optional customer GPS → distance + ETA calculation
+ * - Browser notification when ETA ≤ 3 minutes
  */
 
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { supabase, type DriverLocation } from '@/lib/supabase'
 import { loadMapsScript } from '@/lib/maps-loader'
+import { haversineDistance, estimateArrival } from '@/lib/distance'
+import type { Coordinates } from '@/types/location'
 
 const DRIVER_ID = 'citytaxi-horw-1'
 const COMPANY_PHONE = '041 514 44 44'
 const COMPANY_PHONE_HREF = 'tel:+41415144444'
+const NOTIF_THRESHOLD_MIN = 3
 
 type TrackingState = 'loading' | 'active' | 'offline' | 'error'
 
-/** Minimal clean map style */
 const MAP_STYLE: object[] = [
   { featureType: 'poi', elementType: 'labels', stylers: [{ visibility: 'off' }] },
   { featureType: 'transit', stylers: [{ visibility: 'off' }] },
@@ -27,13 +30,24 @@ const MAP_STYLE: object[] = [
 export default function TakipPage() {
   const mapRef = useRef<HTMLDivElement>(null)
   const googleMapRef = useRef<google.maps.Map | null>(null)
-  const markerRef = useRef<google.maps.Marker | null>(null)
+  const driverMarkerRef = useRef<google.maps.Marker | null>(null)
+  const customerMarkerRef = useRef<google.maps.Marker | null>(null)
 
   const [state, setState] = useState<TrackingState>('loading')
   const [driver, setDriver] = useState<DriverLocation | null>(null)
   const [lastSeen, setLastSeen] = useState<string | null>(null)
 
-  // Format "last updated X seconds ago"
+  // Customer location for ETA
+  const [customerCoords, setCustomerCoords] = useState<Coordinates | null>(null)
+  const [locationAsked, setLocationAsked] = useState(false)
+  const [distanceKm, setDistanceKm] = useState<number | null>(null)
+  const [etaMin, setEtaMin] = useState<number | null>(null)
+
+  // 3-min notification: sent only once per session
+  const notifSentRef = useRef(false)
+
+  // ── Helpers ────────────────────────────────────────────────────────────────
+
   const formatLastSeen = (updatedAt: string) => {
     const diff = Math.floor((Date.now() - new Date(updatedAt).getTime()) / 1000)
     if (diff < 10) return 'gerade eben'
@@ -42,7 +56,6 @@ export default function TakipPage() {
     return `vor ${Math.floor(diff / 3600)} Std.`
   }
 
-  // Update last-seen label every 5s
   useEffect(() => {
     if (!driver?.updated_at) return
     const t = setInterval(() => setLastSeen(formatLastSeen(driver.updated_at)), 5000)
@@ -50,7 +63,91 @@ export default function TakipPage() {
     return () => clearInterval(t)
   }, [driver?.updated_at])
 
-  // Initialize Google Map
+  // ── ETA recalculation whenever driver or customer moves ────────────────────
+
+  const recalcEta = useCallback(
+    (driverPos: Coordinates, customerPos: Coordinates) => {
+      const km = Math.round(haversineDistance(driverPos, customerPos) * 10) / 10
+      const min = estimateArrival(km)
+      setDistanceKm(km)
+      setEtaMin(min)
+
+      // Fire 3-minute browser notification once
+      if (min <= NOTIF_THRESHOLD_MIN && !notifSentRef.current) {
+        notifSentRef.current = true
+        sendBrowserNotification(min)
+      }
+    },
+    []
+  )
+
+  // Recalc whenever driver position updates
+  useEffect(() => {
+    if (!driver || !customerCoords) return
+    recalcEta({ lat: driver.lat, lng: driver.lng }, customerCoords)
+  }, [driver, customerCoords, recalcEta])
+
+  // ── Browser notification ──────────────────────────────────────────────────
+
+  const sendBrowserNotification = (min: number) => {
+    if (typeof Notification === 'undefined') return
+    const send = () =>
+      new Notification('🚕 Citytaxi Horw', {
+        body: `Ihr Taxi kommt in ca. ${min} Minute${min !== 1 ? 'n' : ''}!`,
+        icon: '/assets/favicon.ico',
+      })
+
+    if (Notification.permission === 'granted') {
+      send()
+    } else if (Notification.permission !== 'denied') {
+      Notification.requestPermission().then((p) => { if (p === 'granted') send() })
+    }
+  }
+
+  // ── Customer GPS ───────────────────────────────────────────────────────────
+
+  const requestCustomerLocation = useCallback(() => {
+    setLocationAsked(true)
+    if (!navigator.geolocation) return
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const coords = { lat: pos.coords.latitude, lng: pos.coords.longitude }
+        setCustomerCoords(coords)
+
+        // Add/update customer marker on map
+        const map = googleMapRef.current
+        if (!map) return
+        if (customerMarkerRef.current) {
+          customerMarkerRef.current.setPosition(coords)
+        } else {
+          customerMarkerRef.current = new google.maps.Marker({
+            position: coords,
+            map,
+            title: 'Ihr Standort',
+            zIndex: 10,
+            icon: {
+              path: google.maps.SymbolPath.CIRCLE,
+              fillColor: '#4285F4',
+              fillOpacity: 1,
+              strokeColor: '#FFFFFF',
+              strokeWeight: 3,
+              scale: 9,
+            },
+          })
+        }
+
+        // Draw line driver → customer
+        if (driver) {
+          recalcEta({ lat: driver.lat, lng: driver.lng }, coords)
+        }
+      },
+      () => { /* permission denied — silently ignore */ },
+      { enableHighAccuracy: true, timeout: 8000, maximumAge: 30000 }
+    )
+  }, [driver, recalcEta])
+
+  // ── Google Map init ────────────────────────────────────────────────────────
+
   useEffect(() => {
     if (!mapRef.current) return
     loadMapsScript()
@@ -68,20 +165,21 @@ export default function TakipPage() {
       .catch(() => setState('error'))
   }, [])
 
-  // Update marker position
-  const updateMarker = (lat: number, lng: number) => {
+  // ── Driver marker update ───────────────────────────────────────────────────
+
+  const updateDriverMarker = useCallback((lat: number, lng: number) => {
     const map = googleMapRef.current
     if (!map) return
     const pos = { lat, lng }
-    if (markerRef.current) {
-      markerRef.current.setPosition(pos)
+    if (driverMarkerRef.current) {
+      driverMarkerRef.current.setPosition(pos)
     } else {
-      markerRef.current = new google.maps.Marker({
+      driverMarkerRef.current = new google.maps.Marker({
         position: pos,
         map,
         title: 'Citytaxi Horw',
         icon: {
-          url: "data:image/svg+xml," + encodeURIComponent(`
+          url: 'data:image/svg+xml,' + encodeURIComponent(`
             <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
               <circle cx="24" cy="24" r="22" fill="#C8A96E" stroke="#0A0A0A" stroke-width="2"/>
               <text x="24" y="31" text-anchor="middle" font-size="22">🚕</text>
@@ -92,9 +190,10 @@ export default function TakipPage() {
       })
     }
     map.panTo(pos)
-  }
+  }, [])
 
-  // Fetch initial driver data + subscribe to Realtime
+  // ── Supabase data + Realtime ───────────────────────────────────────────────
+
   useEffect(() => {
     let channel: ReturnType<typeof supabase.channel> | null = null
 
@@ -105,55 +204,55 @@ export default function TakipPage() {
         .eq('driver_id', DRIVER_ID)
         .single()
 
-      if (error || !data) {
-        setState('error')
-        return
-      }
+      if (error || !data) { setState('error'); return }
 
       setDriver(data as DriverLocation)
       setState(data.is_active ? 'active' : 'offline')
+      if (data.is_active) updateDriverMarker(data.lat, data.lng)
 
-      if (data.is_active) {
-        updateMarker(data.lat, data.lng)
-      }
-
-      // Subscribe to realtime changes
       channel = supabase
         .channel('driver-location-changes')
         .on(
           'postgres_changes',
-          {
-            event: 'UPDATE',
-            schema: 'public',
-            table: 'driver_locations',
-            filter: `driver_id=eq.${DRIVER_ID}`,
-          },
+          { event: 'UPDATE', schema: 'public', table: 'driver_locations', filter: `driver_id=eq.${DRIVER_ID}` },
           (payload) => {
             const updated = payload.new as DriverLocation
             setDriver(updated)
             setState(updated.is_active ? 'active' : 'offline')
             if (updated.is_active) {
-              updateMarker(updated.lat, updated.lng)
-            } else if (markerRef.current) {
-              markerRef.current.setMap(null)
-              markerRef.current = null
+              updateDriverMarker(updated.lat, updated.lng)
+            } else if (driverMarkerRef.current) {
+              driverMarkerRef.current.setMap(null)
+              driverMarkerRef.current = null
             }
           }
         )
-        .subscribe()
+        .subscribe((_, err) => { if (err) console.error('[Takip] Realtime:', err) })
     }
 
-    init()
+    init().catch((err: unknown) => {
+      console.error('[Takip] init:', err instanceof Error ? err.message : String(err))
+      setState('error')
+    })
 
-    return () => {
-      channel?.unsubscribe()
-    }
+    return () => { channel?.unsubscribe() }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  // ── ETA display helpers ────────────────────────────────────────────────────
+
+  const etaIsUrgent = etaMin !== null && etaMin <= NOTIF_THRESHOLD_MIN
+  const etaLabel =
+    etaMin === null ? null
+    : etaMin < 1    ? 'gleich hier'
+    : `ca. ${etaMin} Min.`
+
+  // ── JSX ───────────────────────────────────────────────────────────────────
 
   return (
     <>
       <div className="takip-page">
+
         {/* Header */}
         <div className="takip-header">
           <span className="takip-logo">🚕</span>
@@ -168,6 +267,13 @@ export default function TakipPage() {
             {state === 'error' && '⚠ Fehler'}
           </div>
         </div>
+
+        {/* 3-min urgency banner */}
+        {etaIsUrgent && (
+          <div className="takip-urgency" role="alert">
+            🚨 Ihr Taxi kommt gleich! Bitte seien Sie bereit.
+          </div>
+        )}
 
         {/* Map */}
         <div className="takip-map-wrap">
@@ -186,6 +292,30 @@ export default function TakipPage() {
             </div>
           )}
         </div>
+
+        {/* ETA card — only when customer location known */}
+        {state === 'active' && customerCoords && distanceKm !== null && etaLabel && (
+          <div className={`takip-eta${etaIsUrgent ? ' takip-eta--urgent' : ''}`}>
+            <div className="takip-eta-item">
+              <span className="takip-eta-val">{distanceKm} km</span>
+              <span className="takip-eta-lbl">Entfernung</span>
+            </div>
+            <div className="takip-eta-divider" />
+            <div className="takip-eta-item">
+              <span className={`takip-eta-val${etaIsUrgent ? ' takip-eta-val--urgent' : ''}`}>{etaLabel}</span>
+              <span className="takip-eta-lbl">Ankunft</span>
+            </div>
+          </div>
+        )}
+
+        {/* Ask for location button — shown once when driver is active */}
+        {state === 'active' && !customerCoords && !locationAsked && (
+          <div className="takip-location-ask">
+            <button type="button" className="btn btn-outline takip-location-btn" onClick={requestCustomerLocation}>
+              📍 Meine Position teilen — Ankunftszeit berechnen
+            </button>
+          </div>
+        )}
 
         {/* Info bar */}
         <div className="takip-info">
@@ -219,7 +349,7 @@ export default function TakipPage() {
           )}
         </div>
 
-        {/* CTA */}
+        {/* Footer */}
         <div className="takip-footer">
           <a href={COMPANY_PHONE_HREF} className="btn btn-primary takip-call-btn">
             📞 {COMPANY_PHONE} anrufen
@@ -228,6 +358,7 @@ export default function TakipPage() {
             Neue Buchung
           </a>
         </div>
+
       </div>
 
       <style jsx>{`
@@ -238,6 +369,7 @@ export default function TakipPage() {
           background: var(--bg-alt);
         }
 
+        /* Header */
         .takip-header {
           display: flex;
           align-items: center;
@@ -264,17 +396,30 @@ export default function TakipPage() {
           color: var(--secondary-dark);
           white-space: nowrap;
         }
-        .takip-badge--active {
-          background: rgba(26,140,60,0.2);
-          color: #6ee08b;
+        .takip-badge--active { background: rgba(26,140,60,0.2); color: #6ee08b; }
+
+        /* Urgency banner */
+        .takip-urgency {
+          background: #c00;
+          color: #fff;
+          text-align: center;
+          font-weight: 700;
+          font-size: var(--text-sm);
+          padding: 1rem 2rem;
+          animation: urgency-pulse 1s ease-in-out infinite alternate;
+        }
+        @keyframes urgency-pulse {
+          from { background: #c00; }
+          to   { background: #e60000; }
         }
 
+        /* Map */
         .takip-map-wrap {
           position: relative;
           flex: 1;
-          min-height: 50vh;
+          min-height: 45vh;
         }
-        .takip-map { width: 100%; height: 100%; min-height: 50vh; }
+        .takip-map { width: 100%; height: 100%; min-height: 45vh; }
         .takip-map-overlay {
           position: absolute;
           inset: 0;
@@ -292,7 +437,6 @@ export default function TakipPage() {
         .takip-offline-icon { font-size: 4rem; }
         .takip-map-overlay strong { font-size: var(--text-base); color: var(--primary); }
         .takip-map-overlay p { font-size: var(--text-sm); color: var(--text-muted); margin: 0; }
-
         .takip-spinner {
           width: 4rem;
           height: 4rem;
@@ -304,6 +448,66 @@ export default function TakipPage() {
         .takip-map-overlay span { font-size: var(--text-sm); color: var(--text-muted); }
         @keyframes tk-spin { to { transform: rotate(360deg); } }
 
+        /* ETA card */
+        .takip-eta {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0;
+          padding: 1.8rem 2.4rem;
+          background: var(--primary);
+          border-top: 3px solid var(--accent);
+        }
+        .takip-eta--urgent {
+          background: #1a3a1a;
+          border-color: #1a8c3c;
+          animation: eta-flash 1.5s ease-in-out infinite alternate;
+        }
+        @keyframes eta-flash {
+          from { border-color: #1a8c3c; }
+          to   { border-color: #6ee08b; }
+        }
+        .takip-eta-item {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 0.4rem;
+          flex: 1;
+        }
+        .takip-eta-val {
+          font-size: 2.8rem;
+          font-weight: 800;
+          color: var(--accent);
+          line-height: 1;
+          font-family: var(--font-heading);
+        }
+        .takip-eta-val--urgent { color: #6ee08b; }
+        .takip-eta-lbl {
+          font-size: var(--text-xs);
+          color: var(--secondary-dark);
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
+        }
+        .takip-eta-divider {
+          width: 1px;
+          height: 4rem;
+          background: rgba(255,255,255,0.1);
+          flex-shrink: 0;
+        }
+
+        /* Location ask */
+        .takip-location-ask {
+          padding: 1.2rem 2rem;
+          background: var(--bg-alt);
+          border-top: 1px solid var(--border);
+        }
+        .takip-location-btn {
+          width: 100%;
+          justify-content: center;
+          font-size: var(--text-sm);
+        }
+
+        /* Info bar */
         .takip-info {
           display: flex;
           gap: 2rem;
@@ -316,13 +520,10 @@ export default function TakipPage() {
         .takip-stat strong { font-size: var(--text-sm); font-weight: 700; color: var(--primary); }
         .takip-stat small { font-size: var(--text-xs); color: var(--text-light); }
         .takip-stat--coords { display: none; }
-        .takip-offline-text {
-          font-size: var(--text-sm);
-          color: var(--text-muted);
-          margin: 0;
-        }
+        .takip-offline-text { font-size: var(--text-sm); color: var(--text-muted); margin: 0; }
         .takip-offline-text a { color: var(--accent); font-weight: 600; }
 
+        /* Footer */
         .takip-footer {
           display: flex;
           gap: 1.2rem;
@@ -334,6 +535,7 @@ export default function TakipPage() {
 
         @media (min-width: 600px) {
           .takip-stat--coords { display: flex; }
+          .takip-eta-val { font-size: 3.6rem; }
         }
       `}</style>
     </>

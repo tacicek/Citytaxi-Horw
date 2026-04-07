@@ -131,10 +131,22 @@ h4 { font-size: var(--h4); }
 }
 .btn-outline {
   background: transparent;
+  color: var(--primary);
+  border-color: rgba(0,0,0,0.25);
+}
+.btn-outline:hover {
+  background: var(--primary);
+  color: var(--white);
+  border-color: var(--primary);
+  transform: translateY(-2px);
+}
+/* For use on dark/colored backgrounds */
+.btn-outline-invert {
+  background: transparent;
   color: var(--white);
   border-color: var(--secondary);
 }
-.btn-outline:hover {
+.btn-outline-invert:hover {
   background: var(--secondary);
   color: var(--primary);
   transform: translateY(-2px);

@@ -47,7 +47,7 @@ export default function Hero() {
           <Link href={hero.cta_primary.href} className="btn btn-primary hero__cta-main">
             🚕 {hero.cta_primary.label}
           </Link>
-          <Link href={hero.cta_secondary.href} className="btn btn-outline">
+          <Link href={hero.cta_secondary.href} className="btn btn-outline-invert">
             {hero.cta_secondary.label}
           </Link>
         </div>

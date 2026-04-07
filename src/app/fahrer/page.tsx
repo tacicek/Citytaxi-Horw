@@ -31,6 +31,26 @@ function FahrerInner() {
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null)
   const [gpsError, setGpsError] = useState<string | null>(null)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const tokenRef = useRef<string | null>(null)
+
+  useEffect(() => {
+    tokenRef.current = token
+  }, [token])
+
+  // Tab/browser close (e.g. incoming call): mark driver offline; keepalive so request may still complete
+  useEffect(() => {
+    const goOffline = () => {
+      const t = tokenRef.current
+      if (!t) return
+      void fetch('/api/driver/location', {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${t}` },
+        keepalive: true,
+      })
+    }
+    window.addEventListener('pagehide', goOffline)
+    return () => window.removeEventListener('pagehide', goOffline)
+  }, [])
 
   // On mount: check URL param → save to localStorage → or read from localStorage
   useEffect(() => {
