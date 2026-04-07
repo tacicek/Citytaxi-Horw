@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import homeData from '@/data/pages/home.json'
 import Hero from '@/components/sections/Hero'
+import HeroBookingForm from '@/components/sections/HeroBookingForm'
 import FeatureGrid from '@/components/sections/FeatureGrid'
 import ServiceCards from '@/components/sections/ServiceCards'
 import Testimonials from '@/components/sections/Testimonials'
@@ -20,6 +21,7 @@ export default function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(homeData.seo.schema) }}
       />
       <Hero />
+      <HeroBookingForm />
       <FeatureGrid />
       <ServiceCards limit={3} showHeader={true} />
       <Testimonials />
