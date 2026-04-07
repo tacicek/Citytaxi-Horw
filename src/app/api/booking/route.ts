@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@supabase/supabase-js'
 import type { BookingPayload } from '@/lib/booking-notifications'
 import {
-  notifyBookingCustomer,
+  notifyBookingCustomerPending,
   notifyBookingDispatch,
 } from '@/lib/booking-notifications'
 
@@ -13,6 +14,13 @@ function isEmailConfigured(): boolean {
       process.env.BOOKING_EMAIL_FROM &&
       process.env.BOOKING_EMAIL_DISPATCH
   )
+}
+
+function makeSupabase() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.SUPABASE_SERVICE_KEY
+  if (!url || !key) return null
+  return createClient(url, key)
 }
 
 export async function POST(request: NextRequest) {
@@ -68,34 +76,68 @@ export async function POST(request: NextRequest) {
     }
 
     const payload: BookingPayload = {
-      pickup: String(data.pickup).trim(),
-      destination: String(data.destination).trim(),
-      date: String(data.date),
-      time: String(data.time),
-      passengers: String(data.passengers || '1'),
-      service: String(data.service || 'Stadtfahrt'),
-      returnTrip: data.returnTrip === 'on' || data.returnTrip === true,
-      name: String(data.name).trim(),
-      phone: String(data.phone).trim(),
-      email: emailVal || undefined,
+      pickup:       String(data.pickup).trim(),
+      destination:  String(data.destination).trim(),
+      date:         String(data.date),
+      time:         String(data.time),
+      passengers:   String(data.passengers || '1'),
+      service:      String(data.service || 'Stadtfahrt'),
+      returnTrip:   data.returnTrip === 'on' || data.returnTrip === true,
+      name:         String(data.name).trim(),
+      phone:        String(data.phone).trim(),
+      email:        emailVal || undefined,
       flightNumber: data.flightNumber ? String(data.flightNumber).trim() : undefined,
-      luggage: data.luggage ? String(data.luggage) : undefined,
-      notes: data.notes ? String(data.notes).trim() : undefined,
-      receivedAt: new Date().toISOString(),
+      luggage:      data.luggage ? String(data.luggage) : undefined,
+      notes:        data.notes ? String(data.notes).trim() : undefined,
+      receivedAt:   new Date().toISOString(),
     }
 
-    // Optional webhook (Zapier / Make / Slack)
+    // Persist booking in Supabase; bookingId is used in accept/reject links
+    let bookingId = 'unknown'
+    const supabase = makeSupabase()
+    if (supabase) {
+      const { data: row, error } = await supabase
+        .from('bookings')
+        .insert({
+          name:          payload.name,
+          email:         payload.email ?? null,
+          phone:         payload.phone,
+          pickup:        payload.pickup,
+          destination:   payload.destination,
+          date:          payload.date,
+          time:          payload.time,
+          passengers:    payload.passengers,
+          service:       payload.service,
+          return_trip:   payload.returnTrip ?? false,
+          flight_number: payload.flightNumber ?? null,
+          luggage:       payload.luggage ?? null,
+          notes:         payload.notes ?? null,
+          received_at:   payload.receivedAt,
+          status:        'pending',
+        })
+        .select('id')
+        .single()
+      if (error) {
+        console.error('[BookingAPI] Supabase insert error:', error.message)
+      } else if (row?.id) {
+        bookingId = row.id as string
+      }
+    } else {
+      console.warn('[BookingAPI] Supabase not configured — booking not persisted.')
+    }
+
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[BookingRequest]', JSON.stringify({ bookingId, ...payload }, null, 2))
+    }
+
+    // Optional webhook
     const webhookUrl = process.env.BOOKING_WEBHOOK_URL
     if (webhookUrl) {
       fetch(webhookUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: 'booking_request', ...payload }),
+        body: JSON.stringify({ type: 'booking_request', bookingId, ...payload }),
       }).catch((err) => console.error('[BookingAPI] Webhook error:', err))
-    }
-
-    if (process.env.NODE_ENV === 'development') {
-      console.log('[BookingRequest]', JSON.stringify(payload, null, 2))
     }
 
     const notifications: {
@@ -104,24 +146,24 @@ export async function POST(request: NextRequest) {
     } = { dispatch: 'skipped', customer: 'skipped' }
 
     if (isEmailConfigured()) {
-      const dispatchResult = await notifyBookingDispatch(payload)
+      // Dispatch to driver: includes Annehmen / Ablehnen buttons
+      const dispatchResult = await notifyBookingDispatch(payload, bookingId)
       if (!dispatchResult.ok) {
-        // Email failure is non-blocking — booking is still received, log for follow-up
         console.error('[BookingAPI] Dispatch e-mail failed:', dispatchResult.error)
         notifications.dispatch = 'failed'
       } else {
         notifications.dispatch = 'sent'
       }
 
+      // Customer: pending confirmation (no tracking link yet)
       if (payload.email) {
-        const customerResult = await notifyBookingCustomer(payload)
+        const customerResult = await notifyBookingCustomerPending(payload)
         notifications.customer = customerResult.ok ? 'sent' : 'failed'
         if (!customerResult.ok) {
-          console.error('[BookingAPI] Customer e-mail failed:', customerResult.error)
+          console.error('[BookingAPI] Customer pending e-mail failed:', customerResult.error)
         }
       }
     } else if (process.env.NODE_ENV === 'production' && !webhookUrl) {
-      // Warn in production if nothing is configured, but still accept the request
       console.warn(`[BookingAPI] No notification channel configured. Booking from ${payload.name} not forwarded. Call: ${payload.phone}`)
     }
 

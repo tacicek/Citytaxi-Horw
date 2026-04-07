@@ -1,19 +1,16 @@
 'use client'
 
 /**
- * /takip — Customer live tracking page.
- * - Supabase Realtime for live driver location
- * - Optional customer GPS → distance + ETA calculation
- * - Browser notification when ETA ≤ 3 minutes
- *
- * Bug fixes applied:
- * - Map load error is isolated from tracking state (they fail independently)
- * - Pending marker queue: first location stored and replayed after map is ready
- * - Notification permission requested early (on "share location" click) not at 3-min mark
- * - Stale data warning when last update > 30 s old
+ * /live — Customer live tracking page.
+ * Access restricted: token validated server-side via /api/tracking/validate.
+ * Token = HMAC(bookingId:exp, TRACKING_SECRET) — tied to a specific booking.
+ * Link format: /live?t=TOKEN&exp=TIMESTAMP&bid=BOOKING_ID
+ * Token+exp+bid cached in localStorage; subsequent visits revalidate against API.
+ * Token becomes invalid when driver clicks "Müşteriyi Aldım" (booking.status=picked_up).
  */
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState, Suspense } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { supabase, type DriverLocation } from '@/lib/supabase'
 import { loadMapsScript } from '@/lib/maps-loader'
 import { haversineDistance, estimateArrival } from '@/lib/distance'
@@ -24,11 +21,29 @@ const COMPANY_PHONE = '041 514 44 44'
 const COMPANY_PHONE_HREF = 'tel:+41415144444'
 const NOTIF_THRESHOLD_MIN = 3
 const STALE_THRESHOLD_SEC = 30
+const LS_KEY_TOKEN = 'ctxh_t'
+const LS_KEY_EXP   = 'ctxh_exp'
+const LS_KEY_BID   = 'ctxh_bid'
 
 const BASE_URL =
   typeof window !== 'undefined'
     ? window.location.origin
     : `https://${process.env.NEXT_PUBLIC_DOMAIN ?? 'citytaxihorw.ch'}`
+
+/** Server-validates token+exp+bid. Returns true if valid and booking not yet picked up. */
+async function serverValidate(token: string, exp: string, bid: string): Promise<boolean> {
+  try {
+    const res = await fetch(
+      `/api/tracking/validate?t=${encodeURIComponent(token)}&exp=${encodeURIComponent(exp)}&bid=${encodeURIComponent(bid)}`,
+      { cache: 'no-store' }
+    )
+    if (!res.ok) return false
+    const body = await res.json() as { valid: boolean }
+    return body.valid === true
+  } catch {
+    return false
+  }
+}
 
 type TrackingState = 'loading' | 'active' | 'offline' | 'error'
 
@@ -39,7 +54,183 @@ const MAP_STYLE: object[] = [
   { featureType: 'landscape', elementType: 'geometry', stylers: [{ color: '#f5f5f5' }] },
 ]
 
-export default function TakipPage() {
+export default function LivePage() {
+  return (
+    <Suspense>
+      <LiveInner />
+    </Suspense>
+  )
+}
+
+type AuthState = 'checking' | 'ok' | 'denied' | 'expired' | 'pickedUp'
+
+function LiveInner() {
+  const searchParams = useSearchParams()
+  const [authState, setAuthState] = useState<AuthState>('checking')
+
+  useEffect(() => {
+    async function check() {
+      const urlToken = searchParams.get('t')
+      const urlExp   = searchParams.get('exp')
+      const urlBid   = searchParams.get('bid')
+
+      // URL has token+exp+bid → server validate
+      if (urlToken && urlExp && urlBid) {
+        const valid = await serverValidate(urlToken, urlExp, urlBid)
+        if (valid) {
+          localStorage.setItem(LS_KEY_TOKEN, urlToken)
+          localStorage.setItem(LS_KEY_EXP,   urlExp)
+          localStorage.setItem(LS_KEY_BID,   urlBid)
+          setAuthState('ok')
+          window.history.replaceState({}, '', '/live')
+        } else {
+          const exp = parseInt(urlExp, 10)
+          setAuthState(isFinite(exp) && Date.now() > exp ? 'expired' : 'denied')
+        }
+        return
+      }
+
+      // No URL params → check localStorage cache
+      const savedToken = localStorage.getItem(LS_KEY_TOKEN)
+      const savedExp   = localStorage.getItem(LS_KEY_EXP)
+      const savedBid   = localStorage.getItem(LS_KEY_BID)
+      if (savedToken && savedExp && savedBid) {
+        // Quick client-side expiry check before hitting the API
+        const exp = parseInt(savedExp, 10)
+        if (isFinite(exp) && Date.now() > exp) {
+          localStorage.removeItem(LS_KEY_TOKEN)
+          localStorage.removeItem(LS_KEY_EXP)
+          localStorage.removeItem(LS_KEY_BID)
+          setAuthState('expired')
+          return
+        }
+        const valid = await serverValidate(savedToken, savedExp, savedBid)
+        // If driver picked up, show specific "abgeholt" state
+        if (!valid) {
+          const res = await fetch(
+            `/api/tracking/validate?t=${encodeURIComponent(savedToken)}&exp=${encodeURIComponent(savedExp)}&bid=${encodeURIComponent(savedBid)}`,
+            { cache: 'no-store' }
+          ).catch(() => null)
+          const body = res ? await res.json().catch(() => ({})) as { reason?: string } : {}
+          if (body.reason === 'picked_up') {
+            setAuthState('pickedUp')
+            return
+          }
+        }
+        setAuthState(valid ? 'ok' : 'denied')
+        return
+      }
+
+      // Nothing found → no access
+      setAuthState('denied')
+    }
+
+    check()
+  }, [searchParams])
+
+  if (authState === 'checking') return null
+
+  if (authState === 'expired') {
+    return (
+      <AccessDeniedScreen
+        icon="⏱"
+        title="Link abgelaufen"
+        message={
+          <>
+            Dieser Tracking-Link ist nicht mehr gültig.<br />
+            Bitte buchen Sie erneut oder rufen Sie uns an.
+          </>
+        }
+      />
+    )
+  }
+
+  if (authState === 'pickedUp') {
+    return (
+      <AccessDeniedScreen
+        icon="✅"
+        title="Fahrt abgeschlossen"
+        message={
+          <>
+            Ihr Fahrer hat Sie abgeholt – das Live-Tracking ist beendet.<br />
+            Wir freuen uns, Sie bald wieder zu fahren!
+          </>
+        }
+      />
+    )
+  }
+
+  if (authState === 'denied') {
+    return (
+      <AccessDeniedScreen
+        icon="🔒"
+        title="Kein Zugang"
+        message={
+          <>
+            Bitte öffnen Sie den Link aus Ihrer Buchungsbestätigung.<br />
+            Ohne gültigen Link ist diese Seite nicht zugänglich.
+          </>
+        }
+      />
+    )
+  }
+
+  return <LiveMap />
+}
+
+function AccessDeniedScreen({
+  icon,
+  title,
+  message,
+}: {
+  icon: string
+  title: string
+  message: React.ReactNode
+}) {
+  return (
+    <div className="live-denied">
+      <span className="live-denied-icon">{icon}</span>
+      <h2>{title}</h2>
+      <p>{message}</p>
+      <a href={COMPANY_PHONE_HREF} className="btn btn-primary live-denied-btn">
+        📞 {COMPANY_PHONE} anrufen
+      </a>
+      <a href="/booking" className="btn btn-outline live-denied-btn">
+        Neue Buchung
+      </a>
+      <style jsx>{`
+        .live-denied {
+          min-height: 100dvh;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 1.6rem;
+          padding: 4rem 2.4rem;
+          text-align: center;
+          background: var(--bg-dark);
+        }
+        .live-denied-icon { font-size: 5.6rem; }
+        .live-denied h2 {
+          font-family: var(--font-heading);
+          font-size: var(--h3);
+          color: var(--accent);
+          margin: 0;
+        }
+        .live-denied p {
+          font-size: var(--text-sm);
+          color: var(--secondary-dark);
+          line-height: 1.7;
+          max-width: 34rem;
+          margin: 0;
+        }
+        .live-denied-btn { min-width: 22rem; justify-content: center; }
+      `}</style>
+    </div>
+  )
+}
+
+function LiveMap() {
   const mapRef = useRef<HTMLDivElement>(null)
   const googleMapRef = useRef<google.maps.Map | null>(null)
   const driverMarkerRef = useRef<google.maps.Marker | null>(null)
