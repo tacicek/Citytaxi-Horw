@@ -1,5 +1,7 @@
 /** Resend email notifications for booking requests — server-side only */
 
+const SITE_BASE_URL = `https://${process.env.NEXT_PUBLIC_DOMAIN ?? 'citytaxihorw.ch'}`
+
 export type BookingPayload = {
   pickup: string
   destination: string
@@ -183,7 +185,7 @@ export function buildCustomerEmailHtml(data: BookingPayload): string {
                 <td style="padding:20px 24px;text-align:center;">
                   <p style="margin:0 0 4px;font-size:13px;color:#C8A96E;text-transform:uppercase;letter-spacing:1px;">Live-Tracking</p>
                   <p style="margin:0 0 16px;font-size:15px;color:#ffffff;font-weight:600;">Verfolgen Sie Ihr Taxi in Echtzeit</p>
-                  <a href="https://citytaxihorw.ch/takip" style="display:inline-block;background:#C8A96E;color:#0a0a0a;padding:12px 28px;border-radius:8px;font-size:14px;font-weight:700;text-decoration:none;">📍 Taxi jetzt verfolgen</a>
+                  <a href="${SITE_BASE_URL}/live" style="display:inline-block;background:#C8A96E;color:#0a0a0a;padding:12px 28px;border-radius:8px;font-size:14px;font-weight:700;text-decoration:none;">📍 Taxi jetzt verfolgen</a>
                 </td>
               </tr>
             </table>
