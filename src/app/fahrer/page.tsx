@@ -6,7 +6,7 @@
  * On subsequent visits the driver only sees a big START button — no token entry needed.
  */
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 
 const LS_KEY = 'ctxh_driver_token'
@@ -15,6 +15,14 @@ const INTERVAL_MS = 5000
 type Screen = 'loading' | 'start' | 'active' | 'invalid'
 
 export default function FahrerPage() {
+  return (
+    <Suspense>
+      <FahrerInner />
+    </Suspense>
+  )
+}
+
+function FahrerInner() {
   const searchParams = useSearchParams()
   const [screen, setScreen] = useState<Screen>('loading')
   const [token, setToken] = useState<string | null>(null)
