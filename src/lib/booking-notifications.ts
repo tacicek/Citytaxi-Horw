@@ -177,6 +177,17 @@ export function buildCustomerEmailHtml(data: BookingPayload): string {
               </tr>
             </table>
 
+            <!-- Live tracking CTA -->
+            <table width="100%" cellpadding="0" cellspacing="0" style="background:#0a0a0a;border-radius:10px;margin-bottom:24px;">
+              <tr>
+                <td style="padding:20px 24px;text-align:center;">
+                  <p style="margin:0 0 4px;font-size:13px;color:#C8A96E;text-transform:uppercase;letter-spacing:1px;">Live-Tracking</p>
+                  <p style="margin:0 0 16px;font-size:15px;color:#ffffff;font-weight:600;">Verfolgen Sie Ihr Taxi in Echtzeit</p>
+                  <a href="https://citytaxihorw.ch/takip" style="display:inline-block;background:#C8A96E;color:#0a0a0a;padding:12px 28px;border-radius:8px;font-size:14px;font-weight:700;text-decoration:none;">📍 Taxi jetzt verfolgen</a>
+                </td>
+              </tr>
+            </table>
+
             <!-- Response time notice -->
             <table width="100%" cellpadding="0" cellspacing="0" style="background:#fff8ec;border:1px solid #C8A96E;border-radius:8px;margin-bottom:24px;">
               <tr>

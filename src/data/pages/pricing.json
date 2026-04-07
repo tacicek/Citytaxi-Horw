@@ -75,5 +75,33 @@
     { "label": "Wartezeit (ab 5 Min.)", "price": "CHF 0.80/Min." },
     { "label": "Gepäck extra (>3 Stücke)", "price": "CHF 3.00" }
   ],
-  "note": "Alle Preise in CHF inkl. MwSt. Festpreise gelten für Direktfahrten ohne Umwege. Preise auf Anfrage bestätigt."
+  "note": "Alle Preise in CHF inkl. MwSt. Festpreise gelten für Direktfahrten ohne Umwege. Preise auf Anfrage bestätigt.",
+  "estimate_range": {
+    "note": "Schätzung · Endpreis auf Anfrage bestätigt",
+    "low":  { "base": 6.5,  "per_km": 3.2, "min": 15 },
+    "high": { "base": 10.0, "per_km": 4.5, "min": 30 },
+    "surcharges": [
+      {
+        "id": "night",
+        "label": "Nachtzuschlag (22–06 Uhr)",
+        "factor": 1.20,
+        "time_from": 22,
+        "time_to": 6
+      },
+      {
+        "id": "sunday",
+        "label": "Sonntagszuschlag",
+        "factor": 1.25,
+        "weekday": 0
+      },
+      {
+        "id": "holiday_night",
+        "label": "Sonn- & Feiertag + Nacht",
+        "factor": 1.45,
+        "weekday": 0,
+        "time_from": 22,
+        "time_to": 6
+      }
+    ]
+  }
 }

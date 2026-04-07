@@ -1,61 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-
-const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
-
-let mapsScriptPromise: Promise<void> | null = null
-
-function loadMapsScript(): Promise<void> {
-  if (typeof window === 'undefined') return Promise.resolve()
-  if (window.google?.maps?.places) return Promise.resolve()
-  if (!apiKey) return Promise.reject(new Error('No Google Maps API key'))
-  if (mapsScriptPromise) return mapsScriptPromise
-
-  mapsScriptPromise = new Promise((resolve, reject) => {
-    let settled = false
-    const ok = () => {
-      if (settled) return
-      settled = true
-      resolve()
-    }
-    const fail = (msg: string) => {
-      if (settled) return
-      settled = true
-      mapsScriptPromise = null
-      reject(new Error(msg))
-    }
-
-    const pollPlaces = () => {
-      const t = window.setInterval(() => {
-        if (window.google?.maps?.places) {
-          window.clearInterval(t)
-          ok()
-        }
-      }, 50)
-      window.setTimeout(() => {
-        window.clearInterval(t)
-        if (!settled) fail('Maps API timeout')
-      }, 20000)
-    }
-
-    const existing = document.querySelector('script[data-google-maps="1"]')
-    if (existing) {
-      if (window.google?.maps?.places) ok()
-      else pollPlaces()
-      return
-    }
-
-    const s = document.createElement('script')
-    s.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(apiKey)}&libraries=places&loading=async&v=weekly`
-    s.async = true
-    s.dataset.googleMaps = '1'
-    s.onload = () => pollPlaces()
-    s.onerror = () => fail('Maps script failed')
-    document.head.appendChild(s)
-  })
-  return mapsScriptPromise
-}
+import { loadMapsScript, googleMapsApiKey as apiKey } from '@/lib/maps-loader'
 
 type Props = {
   id: string
@@ -63,6 +9,8 @@ type Props = {
   required?: boolean
   placeholder?: string
   autoComplete?: string
+  /** Called when user selects an address from the dropdown. Receives the final address string. */
+  onPlaceSelect?: (address: string) => void
 }
 
 /**
@@ -75,6 +23,7 @@ export default function AddressAutocompleteField({
   required,
   placeholder,
   autoComplete,
+  onPlaceSelect,
 }: Props) {
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -107,11 +56,31 @@ export default function AddressAutocompleteField({
         })
         ac.addListener('place_changed', () => {
           try {
+            if (!inputRef.current) return
             const place = ac?.getPlace()
-            const addr = place?.formatted_address || place?.name
-            if (addr && inputRef.current) inputRef.current.value = addr
+
+            // Google Autocomplete already fills the input with the selected text.
+            // Only override if formatted_address contains real address detail (has comma).
+            // Avoids overwriting with country-only strings like "Switzerland".
+            const formatted = place?.formatted_address ?? ''
+            const placeName = place?.name ?? ''
+            const current = inputRef.current.value
+
+            let finalAddress = current
+            if (formatted.includes(',')) {
+              finalAddress = formatted
+              inputRef.current.value = formatted
+            } else if (placeName.length > 3 && placeName !== 'Switzerland' && placeName !== 'Liechtenstein') {
+              finalAddress = placeName
+              inputRef.current.value = placeName
+            }
+
+            // Notify parent so it can trigger distance estimation
+            if (onPlaceSelect && finalAddress) {
+              onPlaceSelect(finalAddress)
+            }
           } catch {
-            /* Google API darf nie den React-Tree mit werfen */
+            /* prevent Google API errors from breaking the React tree */
           }
         })
       })

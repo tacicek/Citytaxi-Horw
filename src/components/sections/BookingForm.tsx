@@ -1,12 +1,57 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import bookingData from '@/data/pages/booking.json'
+import pricingData from '@/data/pages/pricing.json'
 import siteData from '@/data/site.json'
 import AddressAutocompleteField from '@/components/ui/AddressAutocompleteField'
 
 const AIRPORT_SERVICE = 'Flughafentransfer'
+
+// Fare range — edit in src/data/pages/pricing.json → estimate_range
+const FARE_LOW = pricingData.estimate_range.low
+const FARE_HIGH = pricingData.estimate_range.high
+const SURCHARGES = pricingData.estimate_range.surcharges
+
+function calcFare(fare: { base: number; per_km: number; min: number }, km: number): number {
+  return Math.max(fare.min, fare.base + km * fare.per_km)
+}
+
+type Surcharge = (typeof SURCHARGES)[number]
+
+/** Returns the most specific applicable surcharge for a given date/time string. */
+function getApplicableSurcharge(dateStr: string, timeStr: string): Surcharge | null {
+  if (!timeStr) return null
+  const hour = parseInt(timeStr.split(':')[0], 10)
+  const weekday = dateStr ? new Date(dateStr + 'T12:00').getDay() : -1
+
+  const isNight = (h: number, from: number, to: number) =>
+    from > to ? h >= from || h < to : h >= from && h < to
+
+  // Find all matching surcharges and pick the one with the highest factor
+  const matches = SURCHARGES.filter((s) => {
+    const nightMatch =
+      s.time_from !== undefined && s.time_to !== undefined
+        ? isNight(hour, s.time_from, s.time_to)
+        : true
+    const dayMatch = s.weekday !== undefined ? weekday === s.weekday : true
+    return nightMatch && dayMatch
+  })
+
+  if (matches.length === 0) return null
+  return matches.reduce((best, cur) => (cur.factor > best.factor ? cur : best))
+}
+
+type RawDistance = { km: number; durationMin: number }
+
+type Estimate = {
+  km: number
+  durationMin: number
+  priceMin: number
+  priceMax: number
+  surcharge: Surcharge | null
+}
 
 export default function BookingForm() {
   const [submitted, setSubmitted] = useState(false)
@@ -20,6 +65,12 @@ export default function BookingForm() {
     customer: string
   } | null>(null)
   const [hadCustomerEmail, setHadCustomerEmail] = useState(false)
+  const [pickupAddr, setPickupAddr] = useState('')
+  const [destAddr, setDestAddr] = useState('')
+  const [rawDistance, setRawDistance] = useState<RawDistance | null>(null)
+  const [estimating, setEstimating] = useState(false)
+  const [bookingTime, setBookingTime] = useState('')
+  const [bookingDate, setBookingDate] = useState('')
 
   const { form, quick_options } = bookingData
 
@@ -28,6 +79,72 @@ export default function BookingForm() {
     t.setHours(0, 0, 0, 0)
     setMinDate(t.toISOString().slice(0, 10))
   }, [])
+
+  // Recompute displayed price whenever raw distance OR time/date changes — no extra API call
+  const estimate = useMemo<Estimate | null>(() => {
+    if (!rawDistance) return null
+    const surcharge = getApplicableSurcharge(bookingDate, bookingTime)
+    const factor = surcharge?.factor ?? 1
+    return {
+      ...rawDistance,
+      priceMin: Math.round(calcFare(FARE_LOW, rawDistance.km) * factor),
+      priceMax: Math.round(calcFare(FARE_HIGH, rawDistance.km) * factor),
+      surcharge,
+    }
+  }, [rawDistance, bookingTime, bookingDate])
+
+  // Distance Matrix API — only fires when addresses change
+  useEffect(() => {
+    if (!pickupAddr || !destAddr) {
+      setRawDistance(null)
+      return
+    }
+    if (typeof window === 'undefined') return
+
+    let cancelled = false
+    setEstimating(true)
+
+    const run = () => {
+      if (cancelled) return
+      if (typeof google === 'undefined' || !google.maps?.DistanceMatrixService) {
+        setEstimating(false)
+        setRawDistance(null)
+        return
+      }
+      const svc = new google.maps.DistanceMatrixService()
+      svc.getDistanceMatrix(
+        {
+          origins: [pickupAddr],
+          destinations: [destAddr],
+          travelMode: google.maps.TravelMode.DRIVING,
+          region: 'ch',
+        },
+        (response, status) => {
+          if (cancelled) return
+          setEstimating(false)
+          if (status !== 'OK' || !response) { setRawDistance(null); return }
+          const el = response.rows[0]?.elements[0]
+          if (!el || el.status !== 'OK') { setRawDistance(null); return }
+          const km = el.distance.value / 1000
+          const durationMin = Math.ceil(el.duration.value / 60)
+          setRawDistance({
+            km: Math.round(km * 10) / 10,
+            durationMin,
+          })
+        }
+      )
+    }
+
+    // Wait briefly for Google Maps script to be available if needed
+    if (typeof google !== 'undefined' && google.maps?.DistanceMatrixService) {
+      run()
+    } else {
+      const t = window.setTimeout(run, 1500)
+      return () => { cancelled = true; window.clearTimeout(t) }
+    }
+
+    return () => { cancelled = true }
+  }, [pickupAddr, destAddr])
 
   function safeApiErrorMessage(raw: unknown): string {
     if (typeof raw === 'string' && raw.trim()) return raw
@@ -167,6 +284,7 @@ export default function BookingForm() {
                         required
                         autoComplete="street-address"
                         placeholder="Strasse, Ort oder PLZ"
+                        onPlaceSelect={setPickupAddr}
                       />
                     </div>
                     <div className="form-group">
@@ -177,9 +295,45 @@ export default function BookingForm() {
                         required
                         autoComplete="off"
                         placeholder="Zielort eingeben"
+                        onPlaceSelect={setDestAddr}
                       />
                     </div>
                   </div>
+
+                  {/* Distance & price estimate */}
+                  {estimating ? (
+                    <div className="booking__estimate booking__estimate--loading">
+                      <span className="booking__estimate-spinner" aria-hidden="true" />
+                      Strecke wird berechnet…
+                    </div>
+                  ) : estimate ? (
+                    <div className="booking__estimate" role="status" aria-live="polite">
+                      <div className="booking__estimate-stats">
+                        <span className="booking__estimate-stat">
+                          <strong>{estimate.km} km</strong>
+                          <small>Fahrstrecke</small>
+                        </span>
+                        <span className="booking__estimate-divider" aria-hidden="true" />
+                        <span className="booking__estimate-stat">
+                          <strong>ca. {estimate.durationMin} Min.</strong>
+                          <small>Fahrzeit</small>
+                        </span>
+                        <span className="booking__estimate-divider" aria-hidden="true" />
+                        <span className="booking__estimate-stat booking__estimate-stat--price">
+                          <strong>ca. CHF {estimate.priceMin}–{estimate.priceMax}</strong>
+                          <small>Preisschätzung</small>
+                        </span>
+                      </div>
+                      {estimate.surcharge ? (
+                        <p className="booking__estimate-surcharge">
+                          +{Math.round((estimate.surcharge.factor - 1) * 100)}% {estimate.surcharge.label}
+                        </p>
+                      ) : null}
+                      <p className="booking__estimate-note">
+                        {pricingData.estimate_range.note}
+                      </p>
+                    </div>
+                  ) : null}
 
                   <div className="form-group form-group--checkbox">
                     <label className="booking__check-label">
@@ -203,11 +357,18 @@ export default function BookingForm() {
                   <div className="form-row">
                     <div className="form-group">
                       <label htmlFor="date">{form.date_label} *</label>
-                      <input id="date" name="date" type="date" required min={minDate || undefined} />
+                      <input
+                        id="date" name="date" type="date" required
+                        min={minDate || undefined}
+                        onChange={(e) => setBookingDate(e.target.value)}
+                      />
                     </div>
                     <div className="form-group">
                       <label htmlFor="time">{form.time_label} *</label>
-                      <input id="time" name="time" type="time" required />
+                      <input
+                        id="time" name="time" type="time" required
+                        onChange={(e) => setBookingTime(e.target.value)}
+                      />
                     </div>
                   </div>
                 </div>
@@ -525,6 +686,83 @@ export default function BookingForm() {
           background-repeat: no-repeat;
           background-position: right 1.2rem center;
           padding-right: 3.6rem;
+        }
+
+        /* Distance & price estimate card */
+        .booking__estimate {
+          display: flex;
+          flex-direction: column;
+          gap: 0.6rem;
+          padding: 1.4rem 1.8rem;
+          background: linear-gradient(135deg, rgba(200,169,110,0.08) 0%, rgba(200,169,110,0.04) 100%);
+          border: 1.5px solid rgba(200,169,110,0.35);
+          border-radius: var(--radius-md);
+          margin-bottom: 1.6rem;
+        }
+        .booking__estimate--loading {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          font-size: var(--text-sm);
+          color: var(--text-light);
+        }
+        .booking__estimate-spinner {
+          display: inline-block;
+          width: 1.4rem;
+          height: 1.4rem;
+          border: 2px solid rgba(200,169,110,0.3);
+          border-top-color: var(--accent);
+          border-radius: 50%;
+          animation: spin 0.7s linear infinite;
+          flex-shrink: 0;
+        }
+        .booking__estimate-stats {
+          display: flex;
+          align-items: center;
+          gap: 0;
+        }
+        .booking__estimate-stat {
+          display: flex;
+          flex-direction: column;
+          gap: 0.2rem;
+          flex: 1;
+          text-align: center;
+        }
+        .booking__estimate-stat strong {
+          font-size: var(--text-base);
+          font-weight: 700;
+          color: var(--primary);
+        }
+        .booking__estimate-stat--price strong {
+          color: var(--accent-dark);
+        }
+        .booking__estimate-stat small {
+          font-size: var(--text-xs);
+          color: var(--text-light);
+          font-weight: 400;
+        }
+        .booking__estimate-divider {
+          width: 1px;
+          height: 3.2rem;
+          background: rgba(200,169,110,0.3);
+          flex-shrink: 0;
+        }
+        .booking__estimate-surcharge {
+          text-align: center;
+          font-size: var(--text-xs);
+          font-weight: 600;
+          color: #7a4a00;
+          background: rgba(200,120,0,0.1);
+          border-radius: var(--radius-sm);
+          padding: 0.3rem 0.8rem;
+          margin: 0 auto;
+          width: fit-content;
+        }
+        .booking__estimate-note {
+          font-size: var(--text-xs);
+          color: var(--text-light);
+          text-align: center;
+          margin: 0;
         }
 
         /* Return trip checkbox */
