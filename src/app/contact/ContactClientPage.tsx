@@ -10,7 +10,7 @@ import contactData from '@/data/pages/contact.json'
 
 export default function ContactClientPage() {
   const [sent, setSent] = useState(false)
-  const { form, map_embed } = contactData
+  const { form, map_embed, cards } = contactData
   const { contact } = siteData
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -38,44 +38,44 @@ export default function ContactClientPage() {
             <div className="contact-card">
               <span className="contact-card__icon">📞</span>
               <div>
-                <strong>Festnetz</strong>
+                <strong>{cards.phone_label}</strong>
                 <a href={`tel:${contact.phone}`}>{contact.phone_display}</a>
               </div>
             </div>
             <div className="contact-card">
               <span className="contact-card__icon">📱</span>
               <div>
-                <strong>Handy</strong>
+                <strong>{cards.mobile_label}</strong>
                 <a href={`tel:${contact.mobile}`}>{contact.mobile_display}</a>
               </div>
             </div>
             <div className="contact-card">
               <span className="contact-card__icon">💬</span>
               <div>
-                <strong>WhatsApp</strong>
+                <strong>{cards.whatsapp_label}</strong>
                 <a href={`https://wa.me/${contact.whatsapp.replace(/\s+/g,'')}`} target="_blank" rel="noopener noreferrer">
-                  Jetzt schreiben
+                  {cards.whatsapp_cta}
                 </a>
               </div>
             </div>
             <div className="contact-card">
               <span className="contact-card__icon">✉️</span>
               <div>
-                <strong>E-Mail</strong>
+                <strong>{cards.email_label}</strong>
                 <a href={`mailto:${contact.email}`}>{contact.email}</a>
               </div>
             </div>
             <div className="contact-card">
               <span className="contact-card__icon">📍</span>
               <div>
-                <strong>Standort</strong>
+                <strong>{cards.location_label}</strong>
                 <span>{contact.address.street}, {contact.address.zip} {contact.address.city}</span>
               </div>
             </div>
             <div className="contact-card">
               <span className="contact-card__icon">🕐</span>
               <div>
-                <strong>Öffnungszeiten</strong>
+                <strong>{cards.hours_label}</strong>
                 <span>{contact.hours.note}</span>
               </div>
             </div>

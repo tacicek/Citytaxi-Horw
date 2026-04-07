@@ -214,6 +214,11 @@ h4 { font-size: var(--h4); }
 .blog-card__link { font-size: var(--text-sm); font-weight: 600; color: var(--accent); transition: color var(--transition); }
 .blog-card__link:hover { color: var(--accent-dark); }
 
+/* Google Places Autocomplete — Liste über Navbar (z-index) und Schatten */
+.pac-container {
+  z-index: 10050 !important;
+}
+
 @media (max-width: 900px) {
   .about-layout { grid-template-columns: 1fr; gap: 4rem; }
   .stats__grid { grid-template-columns: repeat(2, 1fr); }

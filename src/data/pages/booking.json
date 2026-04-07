@@ -16,16 +16,16 @@
     {
       "icon": "📞",
       "title": "Sofort anrufen",
-      "value": "+41 41 440 80 80",
+      "value": "041 514 44 44",
       "description": "Direktbuchung per Telefon – rund um die Uhr",
-      "href": "tel:+41414408080"
+      "href": "tel:+41415144444"
     },
     {
       "icon": "💬",
       "title": "WhatsApp",
       "value": "Nachricht senden",
       "description": "Schnell und einfach per WhatsApp buchen",
-      "href": "https://wa.me/41414408080?text=Guten%20Tag%2C%20ich%20m%C3%B6chte%20ein%20Taxi%20bestellen."
+      "href": "https://wa.me/41782455888?text=Guten%20Tag%2C%20ich%20m%C3%B6chte%20ein%20Taxi%20bestellen."
     },
     {
       "icon": "✉️",
@@ -41,6 +41,7 @@
     "destination_label": "Zielort",
     "date_label": "Datum",
     "time_label": "Uhrzeit",
+    "return_trip_label": "Rückfahrt gewünscht",
     "passengers_label": "Anzahl Personen",
     "passengers_options": [1, 2, 3, 4, 5, 6, 7, 8],
     "service_label": "Fahrttyp",
@@ -52,10 +53,29 @@
       "Event / Ausflug",
       "Sonstiges"
     ],
+    "flight_label": "Flugnummer (optional)",
+    "flight_placeholder": "z. B. LX 1470",
+    "luggage_label": "Gepäck",
+    "luggage_options": [
+      { "value": "hand", "label": "Nur Handgepäck" },
+      { "value": "1-2", "label": "1–2 Koffer" },
+      { "value": "3plus", "label": "3+ Koffer / sperriges Gepäck" }
+    ],
     "name_label": "Ihr Name",
     "phone_label": "Telefonnummer",
+    "email_label": "E-Mail (optional)",
+    "email_hint": "Für eine schriftliche Bestätigung Ihrer Anfrage",
+    "email_placeholder": "name@beispiel.ch",
     "notes_label": "Anmerkungen",
+    "notes_placeholder": "Kindersitz, Rollstuhl, besondere Wünsche…",
+    "consent_label": "Ich willige ein, dass meine Angaben zur Bearbeitung der Anfrage verarbeitet werden.",
+    "consent_link_text": "Datenschutzerklärung",
     "submit_label": "Fahrt anfragen",
-    "success_message": "Vielen Dank für Ihre Anfrage!"
+    "success_message": "Vielen Dank für Ihre Anfrage!",
+    "success_detail": "Wir melden uns in der Regel innerhalb von 15 Minuten bei Ihnen. Bei Dringlichkeit erreichen Sie uns direkt unter 041 514 44 44.",
+    "success_email_note": "Sie erhalten zusätzlich eine Bestätigung per E-Mail.",
+    "success_email_partial": "Ihre Anfrage ist eingegangen. Die Bestätigungsmail konnte nicht versendet werden – wir melden uns trotzdem telefonisch.",
+    "error_network": "Verbindungsfehler. Bitte prüfen Sie Ihre Internetverbindung oder rufen Sie uns an: 041 514 44 44.",
+    "error_generic": "Senden fehlgeschlagen. Bitte versuchen Sie es erneut oder buchen Sie telefonisch: 041 514 44 44."
   }
 }

@@ -1,0 +1,118 @@
+---
+description: Citytaxi Horw – core project context, architecture, critical rules
+alwaysApply: true
+---
+
+# Citytaxi Horw — Public Website (citytaxihorw.ch)
+
+## Project Information
+- **Project:** Citytaxi Horw – Public Frontend
+- **Domain:** `citytaxihorw.ch`
+- **Tech Stack:** Next.js 15 (App Router), TypeScript, styled-jsx (no Tailwind), Resend (email)
+- **UI Language:** German (de-CH), Umlauts required in all user-facing text
+- **Code comments:** English or Turkish
+
+## Project Structure
+
+```
+src/
+├── app/
+│   ├── layout.tsx               → Root layout, global metadata, Navbar/Footer
+│   ├── page.tsx                 → Homepage (SSG)
+│   ├── booking/page.tsx         → Taxi bestellen (SSG + BookingForm)
+│   ├── contact/page.tsx         → Kontakt (SSG + ContactClientPage)
+│   ├── blog/page.tsx            → Blog listing (SSG)
+│   ├── blog/[slug]/page.tsx     → Blog post (ISR, revalidate=3600)
+│   ├── services/page.tsx        → Dienstleistungen (SSG)
+│   ├── pricing/page.tsx         → Preise (SSG)
+│   ├── about/page.tsx           → Über uns (SSG)
+│   ├── api/booking/route.ts     → POST handler: validates + sends notifications
+│   └── robots.ts / sitemap.ts
+├── components/
+│   ├── layout/                  → Navbar, Footer
+│   ├── sections/                → Hero, BookingForm, ServiceCards, ...
+│   └── ui/                      → AddressAutocompleteField, WhatsAppButton, ...
+├── data/
+│   ├── site.json                → Company info, contact, navigation, SEO defaults
+│   └── pages/*.json             → Per-page content (home, booking, blog, ...)
+├── lib/
+│   └── booking-notifications.ts → Resend email helpers (server-side only)
+└── styles/globals.css
+```
+
+## Content Rules
+
+All user-facing copy lives in `src/data/`. **Never hardcode text in components.**
+
+```typescript
+// ✅ CORRECT
+import bookingData from '@/data/pages/booking.json'
+<label>{bookingData.form.pickup_label}</label>
+
+// ❌ WRONG
+<label>Abholort</label>
+```
+
+## Rendering Strategy
+
+| Route | Type | Notes |
+|---|---|---|
+| `/` | SSG | Build-time |
+| `/booking` | SSG | Build-time |
+| `/blog` | SSG | Build-time |
+| `/blog/[slug]` | ISR | `revalidate = 3600` |
+| `/services`, `/pricing`, `/about`, `/contact` | SSG | Build-time |
+| `/api/booking` | Route Handler | Server-side POST only |
+
+## Critical Rules
+
+```
+❌ NEVER hardcode company info (phone, email, address) — use src/data/site.json
+❌ NEVER commit .env.local or real API keys to git
+❌ NEVER use <img> — always next/image with width+height or fill
+❌ NEVER skip generateMetadata on any page
+❌ NEVER import src/lib/booking-notifications.ts in a "use client" component
+✅ ALWAYS use "use client" for components with useState/useEffect
+✅ ALWAYS use styled-jsx for component styles (no Tailwind, no inline styles)
+✅ ALWAYS add canonical URL in generateMetadata
+```
+
+## Environment Variables
+
+```bash
+NEXT_PUBLIC_DOMAIN=citytaxihorw.ch
+NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=...    # Client-safe: address autocomplete
+RESEND_API_KEY=...                      # Server-only: booking emails
+BOOKING_EMAIL_FROM="Citytaxi Horw <bookings@citytaxihorw.ch>"
+BOOKING_EMAIL_DISPATCH=info@citytaxihorw.ch
+BOOKING_WEBHOOK_URL=                    # Optional: Zapier/Make/Slack
+SMTP_HOST=mail.hostpoint.ch             # Fallback SMTP
+```
+
+`NEXT_PUBLIC_` prefix = safe for client. All others = server-side only.
+
+## Change Protocol
+
+1. Change MAX 1–2 files per task
+2. Run `npm run build` after changes, fix type errors immediately
+3. Use `npm run build:fresh` if you see `Cannot find module '.XXX.js'`
+4. Never modify `node_modules` or auto-generated files
+
+## Error Fixing
+
+```
+1. ROOT CAUSE — is it server/client boundary? missing metadata? build cache?
+2. MINIMAL CHANGE — only what is necessary
+3. VERIFY — npm run build passes, no TypeScript errors
+4. If other files need changes → say so, don't do it silently
+```
+
+## Common Issues
+
+| Problem | Cause | Fix |
+|---|---|---|
+| `Cannot find module './XXX.js'` | Corrupt build cache | `npm run build:fresh` |
+| Google Autocomplete not showing | API key not in `.env.local` or Maps JS/Places API disabled | Check Google Cloud Console |
+| Autocomplete dropdown hidden by navbar | z-index | `.pac-container { z-index: 10050 !important }` already in globals.css |
+| Email notifications not sent in prod | `RESEND_API_KEY` missing | Add to server environment |
+| `[object Event]` in form | Event passed as error string | Use `safeApiErrorMessage()` in BookingForm.tsx |

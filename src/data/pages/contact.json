@@ -20,5 +20,14 @@
     "message_label": "Ihre Nachricht",
     "submit_label": "Nachricht senden",
     "success_message": "Danke für Ihre Nachricht! Wir melden uns baldmöglichst bei Ihnen."
+  },
+  "cards": {
+    "phone_label": "Festnetz",
+    "mobile_label": "Handy",
+    "whatsapp_label": "WhatsApp",
+    "whatsapp_cta": "Jetzt schreiben",
+    "email_label": "E-Mail",
+    "location_label": "Standort",
+    "hours_label": "Öffnungszeiten"
   }
 }

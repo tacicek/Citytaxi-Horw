@@ -1,0 +1,116 @@
+---
+description: Booking form, API route, and address autocomplete rules
+globs: src/app/api/booking/**,src/components/sections/BookingForm.tsx,src/components/ui/AddressAutocompleteField.tsx,src/lib/booking-notifications.ts
+alwaysApply: false
+---
+
+# Booking Form — Rules & Patterns
+
+## Architecture
+
+```
+User → BookingForm.tsx (client)
+         ↓ POST /api/booking
+       route.ts (server)
+         ↓ sendViaResend()
+       booking-notifications.ts (server-only)
+         ↓ Resend API (dispatch email + customer email)
+```
+
+## BookingForm.tsx — Client Component Rules
+
+**Always** use `handleSubmit` as a synchronous wrapper calling an async function:
+
+```typescript
+// ✅ CORRECT — prevents [object Event] errors
+function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  e.preventDefault()
+  void submitBookingForm(e.currentTarget)  // capture DOM ref BEFORE async
+}
+
+async function submitBookingForm(formEl: HTMLFormElement) {
+  const formData = new FormData(formEl)  // capture immediately
+  // ... async logic
+}
+
+// ❌ WRONG — formEl may be gone by the time async runs
+async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  e.preventDefault()
+  await doSomething()
+  const formData = new FormData(e.currentTarget)  // DOM may be stale
+}
+```
+
+**Always** use `safeApiErrorMessage()` for error state:
+
+```typescript
+function safeApiErrorMessage(raw: unknown): string {
+  if (typeof raw === 'string' && raw.length > 0) return raw
+  return bookingData.form.error_generic ?? 'Ein Fehler ist aufgetreten.'
+}
+// setError(safeApiErrorMessage(err))  ← never setError(String(err))
+```
+
+## API Route (/api/booking) — Server Rules
+
+```
+✅ Validate honeypot field (website) → 200 silent discard for bots
+✅ Validate all required fields including consent
+✅ Validate date is not in the past
+✅ Validate email format with regex if provided
+✅ Send dispatch email (to taxi operator) via Resend
+✅ Send customer confirmation email if customer email provided
+✅ In production: return 503 if neither Resend nor webhook is configured
+❌ NEVER log PII (full names, phone numbers) in production
+❌ NEVER import booking-notifications.ts in any "use client" component
+```
+
+## AddressAutocompleteField.tsx — Google Maps Rules
+
+- Falls back to plain `<input>` if `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` is missing
+- `componentRestrictions: { country: ['ch', 'li'] }` — Switzerland + Liechtenstein only
+- Script loads with `libraries=places&v=weekly`
+- Always clean up Google Maps listeners in `useEffect` cleanup
+- Set `autoComplete="off"` on the input when Google API is active (prevents browser autocomplete overlap)
+
+```typescript
+// ✅ Cleanup pattern
+useEffect(() => {
+  let listener: google.maps.MapsEventListener | undefined
+  loadMapsScript().then(() => {
+    const ac = new google.maps.places.Autocomplete(inputRef.current!, opts)
+    listener = ac.addListener('place_changed', handler)
+  })
+  return () => { listener?.remove() }
+}, [])
+```
+
+## Notification Flow
+
+```typescript
+// booking-notifications.ts exports:
+notifyBookingDispatch(data)   // → email to info@citytaxihorw.ch
+notifyBookingCustomer(data)   // → email to customer (if email provided)
+sendViaResend(params)         // → low-level Resend wrapper
+```
+
+Only import these in `src/app/api/` or `src/lib/`. Never in components.
+
+## Form Fields Reference
+
+| Field | Name attr | Required |
+|---|---|---|
+| Service type | `service` | ✅ |
+| Pickup address | `pickup` | ✅ |
+| Destination | `destination` | ✅ |
+| Date | `date` | ✅ |
+| Time | `time` | ✅ |
+| Passengers | `passengers` | ✅ |
+| Name | `name` | ✅ |
+| Phone | `phone` | ✅ |
+| Flight number | `flightNumber` | Only when service = Flughafentransfer |
+| Luggage | `luggage` | ❌ |
+| Email | `email` | ❌ |
+| Notes | `notes` | ❌ |
+| Consent | `consent` | ✅ |
+| Honeypot | `website` | Hidden, must be empty |

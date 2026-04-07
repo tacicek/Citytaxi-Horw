@@ -1,0 +1,117 @@
+---
+description: SEO metadata, structured data, and page rules for all Next.js pages
+globs: src/app/**/page.tsx,src/app/sitemap.ts,src/app/robots.ts
+alwaysApply: false
+---
+
+# SEO — Page Rules
+
+## Every Page Needs generateMetadata
+
+```typescript
+// ✅ CORRECT — every page.tsx must export this
+import type { Metadata } from 'next'
+const BASE_URL = `https://${process.env.NEXT_PUBLIC_DOMAIN ?? 'citytaxihorw.ch'}`
+
+export const metadata: Metadata = {
+  title: 'Flughafentransfer Luzern',  // will be formatted as "... | Citytaxi Horw"
+  description: '...',
+  alternates: { canonical: `${BASE_URL}/services` },
+  openGraph: {
+    title: '...',
+    description: '...',
+    url: `${BASE_URL}/services`,
+    images: [{ url: '/assets/og-default.jpg', width: 1200, height: 630 }],
+  },
+}
+
+// ✅ Dynamic routes use generateMetadata()
+export async function generateMetadata({ params }): Promise<Metadata> { ... }
+```
+
+**Never use `metadata` and `generateMetadata` in the same file.**
+
+## Schema Markup (JSON-LD)
+
+Add `LocalBusiness` schema on homepage, `Service` schema on service pages:
+
+```typescript
+// In page.tsx or layout.tsx
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'TaxiService',
+  name: 'Citytaxi Horw',
+  url: 'https://citytaxihorw.ch',
+  telephone: '+41415144444',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'Kantonsstrasse 130',
+    addressLocality: 'Horw',
+    postalCode: '6048',
+    addressCountry: 'CH',
+  },
+  areaServed: { '@type': 'City', name: 'Luzern' },
+  openingHours: 'Mo-Su 00:00-24:00',
+}
+
+// Render as:
+<script type="application/ld+json"
+  dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+/>
+```
+
+**Never add `aggregateRating` unless real reviews are verified on-page.**
+
+## Blog Posts (ISR)
+
+```typescript
+// src/app/blog/[slug]/page.tsx
+export const revalidate = 3600  // re-generate every hour
+
+export function generateStaticParams() {
+  return blogData.posts.map(p => ({ slug: p.slug }))
+}
+```
+
+## Images
+
+```typescript
+// ✅ ALWAYS next/image
+import Image from 'next/image'
+<Image src="/assets/hero.webp" alt="Taxi Horw – Citytaxi Horw" width={1200} height={600} priority />
+
+// ❌ NEVER <img>
+<img src="/assets/hero.webp" />
+```
+
+- `alt` text must be descriptive German, include relevant keywords naturally
+- Use `priority` on above-the-fold images
+- Use `fill` + `sizes` for responsive images inside positioned containers
+
+## Canonical URL Pattern
+
+```
+Homepage:    https://citytaxihorw.ch/
+Services:    https://citytaxihorw.ch/services
+Blog post:   https://citytaxihorw.ch/blog/flughafentransfer-tipps
+```
+
+Always use `NEXT_PUBLIC_DOMAIN` env var, never hardcode the domain in page files.
+
+## Sitemap Checklist
+
+`src/app/sitemap.ts` must include:
+- All static pages (/, /services, /pricing, /about, /contact, /booking)
+- All blog slugs from `src/data/pages/blog.json`
+- `changeFrequency` and `priority` set appropriately
+
+## German Text Rules (MANDATORY)
+
+| ✅ Correct (UI) | ❌ Wrong (UI) | URL slug |
+|---|---|---|
+| Für Firmen | Fuer Firmen | `/fuer-firmen` |
+| Flughafentransfer | Flughafen Transfer | `/flughafentransfer` |
+| Über uns | Ueber uns | `/about` |
+| Zürich | Zuerich | `zuerich` |
+
+Umlauts (ü ö ä Ü Ö Ä ß) **must** appear in UI text. URL slugs use ASCII — that is correct and intentional.
