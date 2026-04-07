@@ -38,8 +38,15 @@ export default function ContactClientPage() {
             <div className="contact-card">
               <span className="contact-card__icon">📞</span>
               <div>
-                <strong>Telefon</strong>
+                <strong>Festnetz</strong>
                 <a href={`tel:${contact.phone}`}>{contact.phone_display}</a>
+              </div>
+            </div>
+            <div className="contact-card">
+              <span className="contact-card__icon">📱</span>
+              <div>
+                <strong>Handy</strong>
+                <a href={`tel:${contact.mobile}`}>{contact.mobile_display}</a>
               </div>
             </div>
             <div className="contact-card">

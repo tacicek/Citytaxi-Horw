@@ -2,16 +2,18 @@
   "company": {
     "name": "Citytaxi Horw",
     "tagline": "Ihr zuverlässiger Taxipartner in Horw und der Region Luzern – rund um die Uhr für Sie da.",
-    "logo": "/assets/logo.svg",
+    "logo": "/assets/logo.webp",
     "favicon": "/favicon.ico"
   },
   "contact": {
     "phone": "+41415144444",
-    "phone_display": "+41 41 514 44 44",
-    "whatsapp": "+41415144444",
+    "phone_display": "041 514 44 44",
+    "mobile": "+41782455888",
+    "mobile_display": "078 24 55 888",
+    "whatsapp": "+41782455888",
     "email": "[EMAIL_ADDRESS]",
     "address": {
-      "street": "Kantonsstrasse 2",
+      "street": "Kantonsstrasse 130",
       "zip": "6048",
       "city": "Horw",
       "country": "CH",
@@ -22,7 +24,7 @@
     }
   },
   "navigation": {
-    "logo": "/assets/logo.svg",
+    "logo": "/assets/logo.webp",
     "links": [
       {
         "href": "/",

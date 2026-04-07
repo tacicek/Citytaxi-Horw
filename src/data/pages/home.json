@@ -18,7 +18,7 @@
       "@type": "TaxiService",
       "name": "Citytaxi Horw",
       "url": "https://citytaxihorw.ch",
-      "telephone": "+41414408080",
+      "telephone": "+41415144444",
       "email": "info@citytaxihorw.ch",
       "image": "https://citytaxihorw.ch/assets/og-default.jpg",
       "priceRange": "$$",
@@ -69,8 +69,8 @@
     "description": "Ihr professioneller Taxiservice in Horw und der Region Luzern – rund um die Uhr, für jede Gelegenheit. Flughafentransfers, Businessfahrten und vieles mehr.",
     "cta_primary": { "href": "/booking", "label": "Jetzt Taxi buchen" },
     "cta_secondary": { "href": "/services", "label": "Unsere Dienste" },
-    "phone": "+41414408080",
-    "phone_display": "+41 41 440 80 80"
+    "phone": "+41415144444",
+    "phone_display": "041 514 44 44"
   },
   "features": [
     {
