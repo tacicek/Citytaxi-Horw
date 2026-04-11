@@ -25,7 +25,65 @@
         "Flugüberwachung inklusive",
         "Kostenlose Wartezeit",
         "Festpreisgarantie"
-      ]
+      ],
+      "detail": {
+        "seo": {
+          "title": "Flughafentransfer Luzern – Taxi Zürich, Basel & Bern | Citytaxi Horw",
+          "description": "Professioneller Flughafentransfer ab Horw und Luzern zu den Flughäfen Zürich, Basel und Bern. Festpreise, Flugüberwachung und kostenlose Wartezeit. Jetzt buchen!",
+          "canonical": "https://citytaxihorw.ch/services/flughafentransfer"
+        },
+        "hero_label": "Flughafentransfer",
+        "hero_title": "Sicher und pünktlich zum Flughafen",
+        "hero_subtitle": "Wir bringen Sie stressfrei zu den Flughäfen Zürich, Basel und Bern – mit Festpreis, Flugüberwachung und kostenloser Wartezeit.",
+        "intro": "Ein entspannter Reisebeginn ist kein Zufall – er ist Planung. Citytaxi Horw übernimmt Ihren Transfer zu allen drei internationalen Schweizer Flughäfen. Ob Frühflug um 5 Uhr morgens oder Rückkehr spät nachts: Wir sind zuverlässig für Sie da. Mit direkter Flugüberwachung passen wir unsere Abholzeit automatisch an – auch bei Verspätungen.",
+        "features_title": "Ihre Vorteile im Überblick",
+        "features": [
+          { "icon": "✈️", "title": "Alle Schweizer Flughäfen", "text": "Zürich (ZRH), Basel (BSL/MLH) und Bern (BRN) – wir fahren alle drei Standorte ab Region Luzern." },
+          { "icon": "📡", "title": "Echtzeit-Flugüberwachung", "text": "Ihr Flug landet früher oder später? Kein Problem. Wir verfolgen Ihre Flugnummer live und passen die Abholzeit an." },
+          { "icon": "⏱️", "title": "60 Min. kostenlose Wartezeit", "text": "Nach der Landung haben Sie genügend Zeit für Gepäck und Zoll – ohne Stress und ohne Extrakosten." },
+          { "icon": "💰", "title": "Festpreisgarantie", "text": "Kein Taxameter, keine bösen Überraschungen. Sie kennen Ihren Preis vor der Fahrt – garantiert." },
+          { "icon": "🧳", "title": "Grosses Gepäck kein Problem", "text": "Unsere Fahrzeuge bieten Platz für Koffer, Skigepäck und Kinderwagen. Teilen Sie uns Ihr Gepäck beim Buchen mit." },
+          { "icon": "🤝", "title": "Meet & Greet optional", "text": "Auf Wunsch empfangen wir Sie direkt im Ankunftsbereich mit Namensschild – für einen professionellen Empfang." }
+        ],
+        "process_title": "So einfach funktioniert es",
+        "process": [
+          { "step": "1", "title": "Online buchen", "text": "Füllen Sie das Buchungsformular aus – Abholort, Flughafen, Datum, Uhrzeit und Flugnummer. In unter 2 Minuten erledigt." },
+          { "step": "2", "title": "Bestätigung per E-Mail", "text": "Sie erhalten sofort eine Auftragsbestätigung mit allen Details. Unser Fahrer wird automatisch benachrichtigt." },
+          { "step": "3", "title": "Wir überwachen Ihren Flug", "text": "Am Reisetag verfolgen wir Ihre Flugnummer live. Bei Verspätungen passen wir die Abholzeit eigenständig an." },
+          { "step": "4", "title": "Entspannte Ankunft", "text": "Sie treten aus dem Terminal – Ihr Fahrer erwartet Sie bereits. Live-Tracking auf Ihrem Handy inklusive." }
+        ],
+        "airports": [
+          { "name": "Flughafen Zürich (ZRH)", "distance": "ca. 75 km", "time": "ca. 55–70 Min." },
+          { "name": "Flughafen Basel (BSL/EAP)", "distance": "ca. 130 km", "time": "ca. 80–95 Min." },
+          { "name": "Flughafen Bern (BRN)", "distance": "ca. 95 km", "time": "ca. 65–80 Min." }
+        ],
+        "airports_title": "Entfernungen ab Horw / Luzern",
+        "faq_title": "Häufig gestellte Fragen",
+        "faq": [
+          {
+            "q": "Wie weit im Voraus muss ich buchen?",
+            "a": "Wir empfehlen eine Buchung mindestens 24 Stunden vor der Fahrt. Bei kurzfristigen Anfragen versuchen wir jedoch immer zu helfen – rufen Sie uns an."
+          },
+          {
+            "q": "Was passiert, wenn mein Flug Verspätung hat?",
+            "a": "Wir überwachen Ihre Flugnummer in Echtzeit. Bei Verspätungen passen wir die Abholzeit automatisch an – ohne Mehrkosten für Sie."
+          },
+          {
+            "q": "Gilt der Festpreis auch bei Stau?",
+            "a": "Ja. Einmal vereinbart, bleibt der Preis fix – unabhängig von Verkehr, Baustellen oder Umwegen."
+          },
+          {
+            "q": "Kann ich einen Rücktransfer zum selben Preis buchen?",
+            "a": "Ja, Hin- und Rückfahrt können gemeinsam gebucht werden. Wir bieten für beide Fahrten transparente Festpreise."
+          },
+          {
+            "q": "Welche Zahlungsmittel werden akzeptiert?",
+            "a": "Barzahlung, TWINT und Kartenzahlung sind möglich. Die Zahlungsart können Sie beim Buchen angeben."
+          }
+        ],
+        "cta_title": "Jetzt Flughafentransfer buchen",
+        "cta_text": "Sichern Sie sich Ihren Platz – zuverlässig, pünktlich, zum Festpreis."
+      }
     },
     {
       "id": "limousinenservice",
@@ -39,7 +97,70 @@
         "Chauffeur-Service",
         "Für besondere Anlässe",
         "VIP-Betreuung"
-      ]
+      ],
+      "detail": {
+        "seo": {
+          "title": "Limousinenservice Luzern – VIP Chauffeur & Premium Transfer | Citytaxi Horw",
+          "description": "Exklusiver Limousinenservice in Luzern und der Zentralschweiz. Premium-Fahrzeuge, professionelle Chauffeure – ideal für Hochzeiten, Business und besondere Anlässe.",
+          "canonical": "https://citytaxihorw.ch/services/limousinenservice"
+        },
+        "hero_label": "Limousinenservice",
+        "hero_title": "Reisen Sie mit Stil und Komfort",
+        "hero_subtitle": "Für besondere Anlässe, VIP-Gäste und Geschäftsreisen – diskret, professionell und in Premium-Fahrzeugen.",
+        "intro": "Manche Fahrten verdienen mehr als ein gewöhnliches Taxi. Unser Limousinenservice bietet Ihnen erstklassigen Komfort in gepflegten Premium-Fahrzeugen mit erfahrenem Chauffeur. Ob Hochzeit, Firmenanlass, VIP-Gästebetreuung oder ein exklusives Dinner – wir sorgen dafür, dass Ihre Ankunft einen Eindruck hinterlässt.",
+        "features_title": "Ihre Vorteile im Überblick",
+        "features": [
+          { "icon": "🚘", "title": "Premium-Fahrzeugflotte", "text": "Gepflegte Fahrzeuge der Oberklasse – geräumig, komfortabel und stets in einwandfreiem Zustand." },
+          { "icon": "👔", "title": "Professionelle Chauffeure", "text": "Diskrete, gepflegte Fahrer mit Ortskenntnis und Erfahrung im Umgang mit anspruchsvollen Gästen." },
+          { "icon": "💍", "title": "Hochzeiten & Feiern", "text": "Brautpaarfahrten, Polterabend, Jubiläum – wir gestalten Ihren besonderen Tag noch unvergesslicher." },
+          { "icon": "💼", "title": "Business & VIP-Transfers", "text": "Empfang und Transport von Geschäftspartnern oder VIP-Gästen auf höchstem professionellen Niveau." },
+          { "icon": "🔒", "title": "Diskretion garantiert", "text": "Alle Fahrten werden streng vertraulich behandelt. Ihre Privatsphäre hat bei uns höchste Priorität." },
+          { "icon": "🎗️", "title": "Maßgeschneidert", "text": "Sonderausstattung, Dekorationen oder spezielle Routen? Sprechen Sie uns an – wir erfüllen individuelle Wünsche." }
+        ],
+        "process_title": "Ablauf Ihrer Buchung",
+        "process": [
+          { "step": "1", "title": "Anfrage stellen", "text": "Teilen Sie uns Anlass, Datum, Uhrzeit und gewünschte Route mit – telefonisch oder über unser Buchungsformular." },
+          { "step": "2", "title": "Angebot & Bestätigung", "text": "Sie erhalten ein transparentes Festpreisangebot. Nach Ihrer Bestätigung ist Ihre Fahrt verbindlich reserviert." },
+          { "step": "3", "title": "Vorbereitung", "text": "Ihr Chauffeur bereitet das Fahrzeug sorgfältig vor – sauber, aufgetankt und pünktlich am vereinbarten Treffpunkt." },
+          { "step": "4", "title": "Ihr besonderer Moment", "text": "Lehnen Sie sich zurück und genießen Sie die Fahrt. Ihr Chauffeur kümmert sich um alles weitere." }
+        ],
+        "occasions_title": "Für welche Anlässe?",
+        "occasions": [
+          "Hochzeiten & Brautpaartransfer",
+          "Firmenanlässe & Konferenzen",
+          "VIP-Gästebetreuung",
+          "Airport-VIP-Transfer",
+          "Theaterbesuche & Galadinner",
+          "Geburtstage & Jubiläen",
+          "Messen & Ausstellungen",
+          "Gruppenfahrten"
+        ],
+        "faq_title": "Häufig gestellte Fragen",
+        "faq": [
+          {
+            "q": "Wie lange im Voraus sollte ich den Limousinenservice buchen?",
+            "a": "Für Hochzeiten und grosse Anlässe empfehlen wir eine Buchung mindestens 1–2 Wochen im Voraus. Für Businesstransfers genügen meist 24–48 Stunden."
+          },
+          {
+            "q": "Welche Fahrzeuge stehen zur Verfügung?",
+            "a": "Wir setzen gepflegte Fahrzeuge der Oberklasse ein – geräumig, klimatisiert und mit dunklen Scheiben für Ihre Privatsphäre."
+          },
+          {
+            "q": "Kann das Fahrzeug für Hochzeiten dekoriert werden?",
+            "a": "Ja, auf Wunsch können wir das Fahrzeug mit Schleifen oder anderen Dekorationen versehen. Sprechen Sie uns bei der Buchung an."
+          },
+          {
+            "q": "Ist ein Getränkeservice möglich?",
+            "a": "Für besondere Anlässe können wir auf Wunsch Wasser oder Softdrinks im Fahrzeug bereitstellen. Bitte bei der Buchung angeben."
+          },
+          {
+            "q": "Fahren Sie auch ausserhalb der Zentralschweiz?",
+            "a": "Ja, wir fahren schweizweit – auch für Langstreckentransfers nach Zürich, Basel, Bern oder in den Tessin."
+          }
+        ],
+        "cta_title": "Jetzt Limousinenservice anfragen",
+        "cta_text": "Für Ihren besonderen Anlass – exklusiv, diskret, unvergesslich."
+      }
     },
     {
       "id": "stadtfahrten",
@@ -53,7 +174,65 @@
         "24/7 verfügbar",
         "Kurzstrecken willkommen",
         "Faire Preise"
-      ]
+      ],
+      "detail": {
+        "seo": {
+          "title": "Taxi Luzern & Horw – Stadtfahrten 24/7 | Citytaxi Horw",
+          "description": "Zuverlässige Taxifahrten in Luzern, Horw und der Zentralschweiz – rund um die Uhr. Kurzstrecken willkommen. Faire Preise, schnelle Reaktionszeit. Jetzt bestellen!",
+          "canonical": "https://citytaxihorw.ch/services/stadtfahrten"
+        },
+        "hero_label": "Stadtfahrten",
+        "hero_title": "Ihr Taxi in Luzern – rund um die Uhr",
+        "hero_subtitle": "Schnell, zuverlässig und fair – für Fahrten innerhalb von Horw, Luzern und der gesamten Zentralschweiz. Auch Kurzstrecken jederzeit willkommen.",
+        "intro": "Manchmal braucht man einfach schnell ein Taxi. Citytaxi Horw ist 24 Stunden am Tag, 7 Tage die Woche für Sie unterwegs – ob für den Arzttermin am frühen Morgen, den Bahnhof nach einem langen Abend oder den Kurztrip quer durch die Stadt. Keine Mindeststrecke, keine Wartezeiten bei der Buchung – direkt per Telefon oder Online-Formular.",
+        "features_title": "Ihre Vorteile im Überblick",
+        "features": [
+          { "icon": "🕐", "title": "24/7 verfügbar", "text": "Wir fahren zu jeder Tages- und Nachtzeit – auch an Sonn- und Feiertagen sowie in der Silvesternacht." },
+          { "icon": "📍", "title": "Gesamte Region Luzern", "text": "Horw, Luzern, Kriens, Emmen, Sursee, Zug und weitere Orte der Zentralschweiz – wir kennen jede Strasse." },
+          { "icon": "✅", "title": "Kurzstrecken willkommen", "text": "Keine Fahrt ist zu kurz. Ob 1 km oder 30 km – wir fahren überall hin, ohne Extragebühren für kurze Distanzen." },
+          { "icon": "💵", "title": "Faire und transparente Preise", "text": "Klare Preise ohne versteckte Kosten. Sie wissen vor Abfahrt, was die Fahrt kostet." },
+          { "icon": "⚡", "title": "Schnelle Reaktionszeit", "text": "In der Regel sind wir innerhalb weniger Minuten bei Ihnen – dank lokaler Fahrerkenntnisse und kurzer Wege." },
+          { "icon": "♿", "title": "Rollstuhl & Assistenz möglich", "text": "Fahrten für mobilitätseingeschränkte Personen auf Anfrage – sprechen Sie uns bitte im Voraus an." }
+        ],
+        "process_title": "So bestellen Sie Ihr Taxi",
+        "process": [
+          { "step": "1", "title": "Taxi bestellen", "text": "Rufen Sie uns an unter 041 514 44 44 oder nutzen Sie unser Online-Buchungsformular – in unter 2 Minuten erledigt." },
+          { "step": "2", "title": "Bestätigung erhalten", "text": "Sie erhalten sofort eine Bestätigung mit dem voraussichtlichen Preis und dem Fahrernamen." },
+          { "step": "3", "title": "Fahrer kommt zu Ihnen", "text": "Unser Fahrer holt Sie am vereinbarten Ort ab – pünktlich und zuverlässig." },
+          { "step": "4", "title": "Entspannt ankommen", "text": "Lehnen Sie sich zurück und geniessen Sie die Fahrt. Bequem bezahlen per Bargeld, TWINT oder Karte." }
+        ],
+        "areas_title": "Unsere Fahrtgebiete",
+        "areas": [
+          "Horw", "Luzern (alle Stadtteile)", "Kriens", "Emmen", "Littau",
+          "Adligenswil", "Meggen", "Küssnacht am Rigi", "Sursee", "Zug",
+          "Sempach", "Wolhusen", "Willisau", "Stans (NW)", "Sarnen (OW)"
+        ],
+        "faq_title": "Häufig gestellte Fragen",
+        "faq": [
+          {
+            "q": "Muss ich im Voraus buchen oder kann ich spontan ein Taxi rufen?",
+            "a": "Beides ist möglich. Spontane Fahrten einfach telefonisch unter 041 514 44 44 – wir kommen so schnell wie möglich. Für geplante Fahrten empfehlen wir eine Buchung über das Formular."
+          },
+          {
+            "q": "Fahren Sie auch nachts und am Wochenende?",
+            "a": "Ja, wir sind 24 Stunden am Tag, 7 Tage die Woche für Sie da – ohne Aufpreis für Nacht- oder Wochenendfahrten."
+          },
+          {
+            "q": "Gibt es eine Mindestfahrdistanz?",
+            "a": "Nein. Auch Kurzstrecken von wenigen Kilometern fahren wir gerne – ohne Mindestpreis."
+          },
+          {
+            "q": "Kann ich ein Taxi für mehrere Stopps buchen?",
+            "a": "Ja, Fahrten mit mehreren Zwischenstopps sind kein Problem. Bitte teilen Sie uns alle Haltepunkte bei der Buchung mit."
+          },
+          {
+            "q": "Wie schnell ist der Fahrer bei mir?",
+            "a": "In Horw und Luzern sind wir in der Regel innerhalb von 5–15 Minuten bei Ihnen – abhängig von der Tageszeit und Verfügbarkeit."
+          }
+        ],
+        "cta_title": "Jetzt Taxi bestellen",
+        "cta_text": "24/7 für Sie erreichbar – schnell, fair und zuverlässig."
+      }
     }
   ]
 }

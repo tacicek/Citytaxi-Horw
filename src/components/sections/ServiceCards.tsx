@@ -54,7 +54,7 @@ export default function ServiceCards({ limit, showHeader = true }: ServiceCardsP
                     ))}
                   </ul>
                   <Link
-                    href={`/services#${service.slug}`}
+                    href={`/services/${service.slug}`}
                     className="service-card__link"
                     aria-label={`Mehr über ${service.title}`}
                   >
