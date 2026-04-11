@@ -1,0 +1,34 @@
+---
+description: Language rules — all user-facing text must be German (de-CH)
+alwaysApply: true
+---
+
+# Language Rules — Citytaxi Horw
+
+## UI Language: German Only (de-CH)
+
+All user-facing text — buttons, labels, headings, status messages, error messages, placeholders, tooltips — **must be written in German**.
+
+```
+❌ NEVER use Turkish in any user-facing text
+❌ NEVER use English in any user-facing text
+❌ NEVER mix languages in a single string (e.g. "Müşteri Alındı / Fahrgast abgeholt")
+✅ ALWAYS write UI text in German (de-CH) with correct Umlauts
+```
+
+## Examples
+
+| ❌ Wrong | ✅ Correct |
+|---|---|
+| Müşteri Alındı / Fahrgast abgeholt | Fahrgast abgeholt |
+| Bitte warten / Lütfen bekleyin | Bitte warten… |
+| Accept / Kabul Et | Annehmen |
+| Loading... / Yükleniyor... | Wird geladen… |
+
+## Code Comments
+
+Code comments may be written in **English or Turkish** — this rule applies only to **user-facing strings rendered in the UI**.
+
+## Scope
+
+This rule applies to every file under `src/` — components, pages, API response messages shown to users, and data files under `src/data/`.

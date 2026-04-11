@@ -35,7 +35,7 @@ function playBell() {
   } catch { /* ignore: AudioContext blocked */ }
 }
 
-type Screen = 'loading' | 'dashboard' | 'gpsActive'
+type Screen = 'loading' | 'dashboard'
 
 type Booking = {
   id: string
@@ -77,6 +77,7 @@ function FahrerInner() {
   const [bellEnabled, setBell]         = useState(true)
 
   // GPS state
+  const [gpsActive, setGpsActive]   = useState(false)
   const [coords, setCoords]         = useState<{ lat: number; lng: number } | null>(null)
   const [accuracy, setAccuracy]     = useState<number | null>(null)
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null)
@@ -144,7 +145,7 @@ function FahrerInner() {
   useEffect(() => { bellRef.current = bellEnabled }, [bellEnabled])
 
   useEffect(() => {
-    if (screen !== 'dashboard') return
+    if (screen === 'loading') return
 
     const channel = supabase
       .channel('bookings-dashboard')
@@ -169,7 +170,11 @@ function FahrerInner() {
     return () => { void supabase.removeChannel(channel) }
   }, [screen, loadBookings])
 
-  // Tab/browser close — mark driver offline
+  // gpsActive ref — needed inside event listeners without stale closures
+  const gpsActiveRef = useRef(false)
+  useEffect(() => { gpsActiveRef.current = gpsActive }, [gpsActive])
+
+  // Mark offline only on actual tab/window close (not on tab-switch or new tab)
   useEffect(() => {
     const goOffline = () => {
       const t = driverToken.current
@@ -180,9 +185,14 @@ function FahrerInner() {
         keepalive: true,
       })
     }
-    window.addEventListener('pagehide', goOffline)
-    return () => window.removeEventListener('pagehide', goOffline)
+    // beforeunload fires only when the page is truly closed/navigated away,
+    // NOT when a new tab is opened or the user switches to another app.
+    window.addEventListener('beforeunload', goOffline)
+    return () => window.removeEventListener('beforeunload', goOffline)
   }, [])
+
+  // sendLocation ref — keeps visibilitychange handler stable without stale closure
+  const sendLocationRef = useRef<(() => Promise<void>) | null>(null)
 
   // Annehmen / Ablehnen — calls POST /api/booking/accept with Supabase JWT
   const handleBookingAction = useCallback(async (bookingId: string, action: 'accept' | 'reject') => {
@@ -267,15 +277,31 @@ function FahrerInner() {
     )
   }, [])
 
+  // Keep ref in sync so visibilitychange handler always calls the latest version
+  useEffect(() => { sendLocationRef.current = sendLocation }, [sendLocation])
+
+  // visibilitychange — restart GPS interval when driver returns to this tab/app
+  useEffect(() => {
+    const onVisible = () => {
+      if (document.visibilityState === 'visible' && gpsActiveRef.current && sendLocationRef.current) {
+        if (intervalRef.current) clearInterval(intervalRef.current)
+        void sendLocationRef.current()
+        intervalRef.current = setInterval(sendLocationRef.current, INTERVAL_MS)
+      }
+    }
+    document.addEventListener('visibilitychange', onVisible)
+    return () => document.removeEventListener('visibilitychange', onVisible)
+  }, []) // no deps — uses refs only
+
   const handleGpsStart = useCallback(() => {
-    setScreen('gpsActive')
+    setGpsActive(true)
     void sendLocation()
     intervalRef.current = setInterval(sendLocation, INTERVAL_MS)
   }, [sendLocation])
 
   const handleGpsStop = useCallback(async () => {
     if (intervalRef.current) { clearInterval(intervalRef.current); intervalRef.current = null }
-    setScreen('dashboard')
+    setGpsActive(false)
     setLastUpdate(null)
     setCoords(null)
     const t = driverToken.current
@@ -303,32 +329,29 @@ function FahrerInner() {
 
   return (
     <>
-      <div className="fp-page">
+      {/* ── GPS active banner — fixed below navbar, single line ── */}
+      {gpsActive && (
+        <div className="fp-gps-banner">
+          <span className="fp-gps-dot" aria-hidden="true" />
+          <span className="fp-gps-label">GPS aktiv</span>
+          {lastUpdate && (
+            <span className="fp-gps-time">
+              {lastUpdate.toLocaleTimeString('de-CH', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+            </span>
+          )}
+          {accuracy !== null && (
+            <span className="fp-gps-acc">±{Math.round(accuracy)} m</span>
+          )}
+          <button type="button" className="fp-stop-btn-inline" onClick={handleGpsStop}>
+            ⏹ STOP
+          </button>
+        </div>
+      )}
+
+      <div className={`fp-page${gpsActive ? ' fp-page--gps' : ''}`}>
 
         {screen === 'loading' && (
           <div className="fp-center"><div className="fp-spinner" /></div>
-        )}
-
-        {/* ── Active GPS screen ── */}
-        {screen === 'gpsActive' && (
-          <div className="fp-card fp-card--active">
-            <div className="fp-pulse-ring" aria-hidden="true" />
-            <span className="fp-big-icon">🚕</span>
-            <h2 className="fp-title">Fahrt läuft</h2>
-            <p className="fp-sub">Standort wird übertragen</p>
-            <div className="fp-stats">
-              <div className="fp-stat">
-                <strong>{lastUpdate ? lastUpdate.toLocaleTimeString('de-CH', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '—'}</strong>
-                <small>Letzte Aktualisierung</small>
-              </div>
-              <div className="fp-stat">
-                <strong>{accuracy !== null ? `±${Math.round(accuracy)} m` : '—'}</strong>
-                <small>GPS-Genauigkeit</small>
-              </div>
-            </div>
-            {gpsError && <p className="fp-error">{gpsError}</p>}
-            <button type="button" className="fp-stop-btn" onClick={handleGpsStop}>STOP</button>
-          </div>
         )}
 
         {/* ── Dashboard ── */}
@@ -365,16 +388,33 @@ function FahrerInner() {
               </div>
             )}
 
-            {/* GPS Start */}
-            <div className="fp-section">
-              <div className="fp-section-header">
-                <h2 className="fp-section-title">GPS Tracking</h2>
-              </div>
-              <div className="fp-gps-start-row">
-                <p className="fp-gps-hint">Tippen Sie auf START wenn Sie losfahren</p>
-                <button type="button" className="fp-start-btn" onClick={handleGpsStart}>START</button>
-                {gpsError && <p className="fp-error">{gpsError}</p>}
-              </div>
+            {/* GPS section — START when idle, status when active */}
+            <div className="fp-section fp-section--gps">
+              {gpsActive ? (
+                <div className="fp-gps-active-row">
+                  <div>
+                    <p className="fp-gps-idle-title">GPS Tracking läuft</p>
+                    {gpsError
+                      ? <p className="fp-error" style={{marginTop:'0.6rem'}}>{gpsError}</p>
+                      : <p className="fp-gps-idle-hint">Standort wird alle {INTERVAL_MS / 1000} Sek. übertragen</p>
+                    }
+                  </div>
+                  <button type="button" className="fp-stop-btn-inline" onClick={handleGpsStop}>
+                    ⏹ STOP
+                  </button>
+                </div>
+              ) : (
+                <div className="fp-gps-idle-row">
+                  <div>
+                    <p className="fp-gps-idle-title">GPS Tracking</p>
+                    <p className="fp-gps-idle-hint">Tippen Sie auf START wenn Sie losfahren</p>
+                    {gpsError && <p className="fp-error" style={{marginTop:'0.6rem'}}>{gpsError}</p>}
+                  </div>
+                  <button type="button" className="fp-start-btn-inline" onClick={handleGpsStart}>
+                    ▶ START
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Accepted bookings — Müşteriyi Aldım */}
@@ -397,7 +437,15 @@ function FahrerInner() {
                         <span className="fp-item-time">{formatDate(b.date, b.time)}</span>
                       </div>
                       <div className="fp-item-route">
-                        <span className="fp-item-addr">📍 {b.pickup}</span>
+                        <a
+                          href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(b.pickup)}&travelmode=driving`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="fp-item-addr fp-item-addr--nav"
+                          title="Navigation zum Abholort starten"
+                        >
+                          📍 {b.pickup} <span className="fp-nav-icon">↗</span>
+                        </a>
                         <span className="fp-item-arrow">→</span>
                         <span className="fp-item-addr">🏁 {b.destination}</span>
                       </div>
@@ -412,7 +460,7 @@ function FahrerInner() {
                         disabled={actionLoading === b.id}
                         onClick={() => handlePickup(b.id)}
                       >
-                        {actionLoading === b.id ? 'Bitte warten…' : '✅ Müşteri Alındı / Fahrgast abgeholt'}
+                        {actionLoading === b.id ? 'Bitte warten…' : '✅ Fahrgast abgeholt'}
                       </button>
                     </li>
                   ))}
@@ -482,8 +530,13 @@ function FahrerInner() {
           min-height: 100dvh;
           background: #0a0a0a;
           display: flex;
-          justify-content: center;
+          flex-direction: column;
+          align-items: center;
           padding: var(--nav-height) 0 4rem;
+        }
+        .fp-page--gps {
+          /* extra room for the fixed GPS banner (4rem height) */
+          padding-top: calc(var(--nav-height) + 4rem);
         }
         .fp-center {
           display: flex; align-items: center; justify-content: center;
@@ -498,44 +551,66 @@ function FahrerInner() {
         }
         @keyframes fp-spin { to { transform: rotate(360deg); } }
 
-        /* ── GPS Active card ── */
-        .fp-card {
-          background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 2.4rem;
-          padding: 4rem 3.2rem; width: 100%; max-width: 38rem;
-          display: flex; flex-direction: column; align-items: center;
-          gap: 1.6rem; text-align: center; position: relative; overflow: hidden;
-          margin: 4rem 2rem;
+        /* ── GPS active banner — fixed below navbar, single row ── */
+        .fp-gps-banner {
+          position: fixed;
+          top: var(--nav-height);
+          left: 0; right: 0;
+          z-index: 200;
+          background: #0d2b17;
+          border-bottom: 2px solid #1a8c3c;
+          padding: 0 2.4rem;
+          height: 4rem;
+          display: flex; align-items: center;
+          gap: 1.2rem;
+          overflow: hidden;
         }
-        .fp-card--active { border-color: #1a8c3c; }
-        .fp-big-icon { font-size: 5.6rem; line-height: 1; }
-        .fp-title {
-          font-size: 2.8rem; font-weight: 800; color: #C8A96E;
-          margin: 0; font-family: var(--font-heading);
+        .fp-gps-banner .fp-stop-btn-inline {
+          margin-left: auto;
         }
-        .fp-sub { font-size: 1.5rem; color: #888; margin: 0; }
-        .fp-stats {
-          display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem;
-          width: 100%; background: #111; border-radius: 1.2rem; padding: 1.6rem;
+        .fp-gps-banner-left { display: flex; align-items: center; gap: 1.2rem; flex-wrap: wrap; }
+        .fp-gps-dot {
+          width: 10px; height: 10px; border-radius: 50%; background: #22c55e;
+          box-shadow: 0 0 0 0 rgba(34,197,94,0.5);
+          animation: fp-gps-blink 1.4s ease-in-out infinite; flex-shrink: 0;
         }
-        .fp-stat { display: flex; flex-direction: column; gap: 0.3rem; }
-        .fp-stat strong { font-size: 1.5rem; font-weight: 700; color: #fff; }
-        .fp-stat small  { font-size: 1.1rem; color: #555; }
-        .fp-stop-btn {
-          width: 14rem; height: 14rem; border-radius: 50%;
-          background: #c00; color: #fff; font-size: 2.4rem;
-          font-weight: 900; letter-spacing: 0.1em; border: none;
-          cursor: pointer; transition: transform 0.12s, background 0.15s; margin: 0.8rem 0;
+        @keyframes fp-gps-blink {
+          0%, 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.6); }
+          50%       { box-shadow: 0 0 0 8px rgba(34,197,94,0); }
         }
-        .fp-stop-btn:active { transform: scale(0.94); background: #900; }
-        .fp-pulse-ring {
-          position: absolute; top: -4rem; left: 50%; transform: translateX(-50%);
-          width: 8rem; height: 8rem; border-radius: 50%;
-          background: rgba(26,140,60,0.15);
-          animation: fp-ring 2s ease-out infinite; pointer-events: none;
+        .fp-gps-label { font-size: 1.4rem; font-weight: 700; color: #22c55e; }
+        .fp-gps-time  { font-size: 1.25rem; color: #888; }
+        .fp-gps-acc   { font-size: 1.2rem; color: #555; }
+        .fp-gps-err   { font-size: 1.2rem; color: #f87171; }
+        .fp-stop-btn-inline {
+          background: #c00; color: #fff; border: none; border-radius: 0.8rem;
+          font-size: 1.3rem; font-weight: 800; padding: 0.7rem 1.8rem;
+          cursor: pointer; white-space: nowrap;
+          transition: background 0.15s, transform 0.1s;
+          letter-spacing: 0.05em;
         }
-        @keyframes fp-ring {
-          0%   { transform: translateX(-50%) scale(1); opacity: 0.8; }
-          100% { transform: translateX(-50%) scale(4); opacity: 0;   }
+        .fp-stop-btn-inline:active { background: #900; transform: scale(0.96); }
+
+        /* ── GPS section in dashboard ── */
+        .fp-section--gps {}
+        .fp-gps-idle-row,
+        .fp-gps-active-row {
+          display: flex; align-items: center; justify-content: space-between; gap: 1.6rem;
+        }
+        .fp-gps-idle-title { font-size: 1.5rem; font-weight: 700; color: #C8A96E; margin: 0 0 0.4rem; }
+        .fp-gps-idle-hint  { font-size: 1.35rem; color: #555; margin: 0; }
+        .fp-start-btn-inline {
+          background: #1a8c3c; color: #fff; border: none; border-radius: 0.8rem;
+          font-size: 1.4rem; font-weight: 800; padding: 1rem 2.4rem;
+          cursor: pointer; white-space: nowrap; letter-spacing: 0.05em;
+          box-shadow: 0 0 0 0 rgba(26,140,60,0.5);
+          animation: fp-idle-pulse 2.5s ease-in-out infinite;
+          transition: background 0.15s, transform 0.1s;
+        }
+        .fp-start-btn-inline:active { transform: scale(0.96); background: #156b2e; }
+        @keyframes fp-idle-pulse {
+          0%, 100% { box-shadow: 0 0 0 0 rgba(26,140,60,0.4); }
+          50%       { box-shadow: 0 0 0 10px rgba(26,140,60,0); }
         }
 
         /* ── Dashboard layout ── */
@@ -613,25 +688,6 @@ function FahrerInner() {
           padding: 0.8rem 1.4rem; margin: 0; width: 100%;
         }
 
-        /* GPS Start row */
-        .fp-gps-start-row {
-          display: flex; flex-direction: column; align-items: center; gap: 1.2rem;
-        }
-        .fp-gps-hint { font-size: 1.4rem; color: #555; margin: 0; }
-        .fp-start-btn {
-          width: 14rem; height: 14rem; border-radius: 50%;
-          background: #1a8c3c; color: #fff; font-size: 2.8rem;
-          font-weight: 900; letter-spacing: 0.1em; border: none; cursor: pointer;
-          box-shadow: 0 0 0 0 rgba(26,140,60,0.5);
-          animation: fp-idle-pulse 2.5s ease-in-out infinite;
-          transition: transform 0.12s, background 0.15s; margin: 0.4rem 0;
-        }
-        .fp-start-btn:active { transform: scale(0.94); background: #156b2e; }
-        @keyframes fp-idle-pulse {
-          0%, 100% { box-shadow: 0 0 0 0 rgba(26,140,60,0.4); }
-          50%       { box-shadow: 0 0 0 16px rgba(26,140,60,0); }
-        }
-
         /* Booking list items */
         .fp-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 1.6rem; }
         .fp-item {
@@ -645,6 +701,14 @@ function FahrerInner() {
         .fp-item-route { display: flex; flex-direction: column; gap: 0.4rem; }
         .fp-item-arrow { color: #555; font-size: 1.3rem; padding-left: 0.4rem; }
         .fp-item-addr  { font-size: 1.4rem; color: #ccc; line-height: 1.4; }
+        .fp-item-addr--nav {
+          color: #C8A96E; text-decoration: none;
+          display: inline-flex; align-items: baseline; gap: 0.4rem;
+          border-bottom: 1px dashed rgba(200,169,110,0.4);
+          transition: color 0.15s, border-color 0.15s;
+        }
+        .fp-item-addr--nav:hover { color: #fff; border-color: rgba(255,255,255,0.4); }
+        .fp-nav-icon { font-size: 1.2rem; opacity: 0.7; }
         .fp-item-meta {
           display: flex; align-items: center; gap: 0.6rem;
           font-size: 1.3rem; color: #666; flex-wrap: wrap;
