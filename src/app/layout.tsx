@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Script from 'next/script'
 import siteData from '@/data/site.json'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
@@ -65,6 +66,8 @@ export const metadata: Metadata = {
   },
 }
 
+const GOOGLE_ADS_ID = 'AW-16664968863'
+
 export default function RootLayout({
   children,
 }: {
@@ -72,6 +75,20 @@ export default function RootLayout({
 }) {
   return (
     <html lang="de">
+      <head>
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_ID}`}
+          strategy="afterInteractive"
+        />
+        <Script id="gtag-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GOOGLE_ADS_ID}');
+          `}
+        </Script>
+      </head>
       <body>
         <Navbar />
         <main id="main-content">{children}</main>
